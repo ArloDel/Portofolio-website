@@ -1,14 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  // Static export target (Cloudflare Pages serves the `out/` folder directly)
+  output: "export",
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'avatars.githubusercontent.com',
-        pathname: '/**',
-      },
-    ],
+    // next/image optimization endpoint requires a server — use unoptimized
+    // sources with static export
+    unoptimized: true,
   },
 };
 
