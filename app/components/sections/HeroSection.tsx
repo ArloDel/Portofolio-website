@@ -97,7 +97,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-0 hidden md:block"
       >
-        <div className="hero-float absolute right-[8%] top-[16%] h-40 w-40 rounded-full border border-white/[0.07]" />
+        <div className="hero-float absolute right-[8%] top-[16%] h-40 w-40 rounded-full border border-fill/[0.07]" />
         <div className="hero-float absolute left-[6%] top-[22%] h-2 w-2 rounded-full bg-accent/70" />
       </div>
 
@@ -107,8 +107,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-0 hidden md:block"
       >
-        <div className="absolute bottom-[26%] right-[16%] h-24 w-24 animate-float-slow rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm" />
-        <div className="absolute bottom-[34%] left-[14%] h-1.5 w-1.5 rounded-full bg-white/40" />
+        <div className="absolute bottom-[26%] right-[16%] h-24 w-24 animate-float-slow rounded-2xl border border-fill/[0.06] bg-fill/[0.02] backdrop-blur-sm" />
+        <div className="absolute bottom-[34%] left-[14%] h-1.5 w-1.5 rounded-full bg-fill/40" />
       </div>
 
       {/* ---- Content ---- */}
@@ -133,7 +133,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         {/* Name */}
         <h1
           aria-label={name}
-          className="font-display text-[16vw] font-bold leading-[0.95] tracking-tightest text-white sm:text-7xl md:text-8xl lg:text-9xl"
+          className="font-display text-[16vw] font-bold leading-[0.95] tracking-tightest text-ink-hi sm:text-7xl md:text-8xl lg:text-9xl"
         >
           {NAME.split("").map((char, i) => (
             <span
@@ -167,7 +167,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           <button
             type="button"
             onClick={() => navigate("projects")}
-            className="group flex items-center gap-2.5 rounded-full bg-white px-6 py-3 text-sm font-medium text-canvas transition-all duration-300 hover:shadow-glow hover:-translate-y-0.5"
+            className="group flex items-center gap-2.5 rounded-full bg-invert px-6 py-3 text-sm font-medium text-invert-ink transition-all duration-300 hover:shadow-glow hover:-translate-y-0.5"
           >
             View projects
             <ArrowDown className="h-4 w-4 transition-transform duration-300 group-hover:translate-y-0.5" strokeWidth={1.75} />
@@ -185,9 +185,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         {/* Quiet stat chips */}
         <div data-hero-fade className="mt-14 flex flex-wrap items-center gap-x-8 gap-y-3 font-mono text-[10px] tracking-caption text-ink-faint">
           <span>05 — SHIPPED PRODUCTS</span>
-          <span className="hidden h-3 w-px bg-white/10 sm:block" />
+          <span className="hidden h-3 w-px bg-fill/10 sm:block" />
           <span>3+ YRS BUILDING</span>
-          <span className="hidden h-3 w-px bg-white/10 sm:block" />
+          <span className="hidden h-3 w-px bg-fill/10 sm:block" />
           <span>UPN JATIM — INFO SYSTEMS</span>
         </div>
       </div>
@@ -199,7 +199,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         className="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-3"
       >
         <span className="caption">Scroll</span>
-        <span className="relative block h-10 w-px overflow-hidden bg-white/10">
+        <span className="relative block h-10 w-px overflow-hidden bg-fill/10">
           <span className="absolute inset-x-0 top-0 h-3 animate-scroll-dot rounded-full bg-accent/80" />
         </span>
       </div>

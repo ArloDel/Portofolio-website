@@ -62,12 +62,12 @@ export default function JourneyLogSection({
         <div className="relative">
           {/* Timeline spine */}
           <div
-            className="absolute left-[7px] top-2 bottom-8 w-px bg-white/[0.1] md:left-1/2 md:-translate-x-1/2"
+            className="absolute left-[7px] top-2 bottom-8 w-px bg-fill/[0.1] md:left-1/2 md:-translate-x-1/2"
             aria-hidden="true"
           >
             <div
               ref={railRef}
-              className="h-full w-full origin-top bg-gradient-to-b from-accent/70 via-white/[0.12] to-white/[0.04]"
+              className="h-full w-full origin-top bg-gradient-to-b from-accent/70 via-fill/[0.12] to-fill/[0.04]"
             />
           </div>
 
@@ -109,7 +109,7 @@ export default function JourneyLogSection({
                         </span>
                       </div>
 
-                      <h3 className="font-display text-xl font-semibold tracking-tight text-white transition-colors group-hover:text-accent">
+                      <h3 className="font-display text-xl font-semibold tracking-tight text-ink-hi transition-colors group-hover:text-accent">
                         {item.title}
                       </h3>
 
@@ -149,7 +149,7 @@ export default function JourneyLogSection({
                       )}
 
                       {item.technologies && item.technologies.length > 0 && (
-                        <div className="mt-5 flex flex-wrap gap-1.5 border-t border-white/[0.07] pt-4">
+                        <div className="mt-5 flex flex-wrap gap-1.5 border-t border-fill/[0.07] pt-4">
                           {item.technologies.map((tech, tIdx) => (
                             <span
                               key={tIdx}

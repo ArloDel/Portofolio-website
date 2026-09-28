@@ -10,10 +10,12 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^7.3.1",
     "animejs": "^3.2.2",
     "gsap": "^3.12.5",
     "lucide-react": "^0.453.0",
     "next": "^14.2.15",
+    "next-themes": "^0.4.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

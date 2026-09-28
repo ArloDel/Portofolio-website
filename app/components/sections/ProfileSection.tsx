@@ -104,7 +104,7 @@ export const ProfileSection: React.FC<ProfileSectionProps> = ({
             <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
               <div
                 data-reveal
-                className="relative mb-6 h-28 w-28 overflow-hidden rounded-2xl border border-white/10 bg-surface"
+                className="relative mb-6 h-28 w-28 overflow-hidden rounded-2xl border border-fill/10 bg-surface"
               >
                 {!imageError ? (
                   <Image
@@ -122,7 +122,7 @@ export const ProfileSection: React.FC<ProfileSectionProps> = ({
                 )}
               </div>
 
-              <h3 data-reveal className="font-display text-2xl font-semibold tracking-tight text-white">
+              <h3 data-reveal className="font-display text-2xl font-semibold tracking-tight text-ink-hi">
                 {profile.name}
               </h3>
               <p data-reveal data-reveal-delay="80" className="mt-1 font-mono text-[10px] tracking-caption text-accent">
@@ -183,7 +183,7 @@ export const ProfileSection: React.FC<ProfileSectionProps> = ({
             <GlassCard className="p-7" hover>
               <div data-reveal>
                 <div className="flex items-baseline justify-between">
-                  <h3 className="font-display text-lg font-semibold tracking-tight text-white">
+                  <h3 className="font-display text-lg font-semibold tracking-tight text-ink-hi">
                     Stack proficiency
                   </h3>
                   <span className="font-mono text-[10px] tracking-caption text-ink-faint">
@@ -213,7 +213,7 @@ export const ProfileSection: React.FC<ProfileSectionProps> = ({
                         <span className="text-ink-faint"> / {stat.maxValue}</span>
                       </div>
                     </div>
-                    <div className="h-1 w-full overflow-hidden rounded-full bg-white/[0.07]">
+                    <div className="h-1 w-full overflow-hidden rounded-full bg-fill/[0.07]">
                       <div
                         data-bar-fill
                         className="h-full rounded-full bg-gradient-to-r from-accent/60 to-accent shadow-glowSoft"
@@ -234,7 +234,7 @@ export const ProfileSection: React.FC<ProfileSectionProps> = ({
                 PROFILE
               </div>
               <div data-reveal data-reveal-delay="80">
-                <h4 className="mt-3 font-display text-xl font-semibold tracking-tight text-white">
+                <h4 className="mt-3 font-display text-xl font-semibold tracking-tight text-ink-hi">
                   From coursework to production.
                 </h4>
               </div>

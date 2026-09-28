@@ -97,7 +97,7 @@ export default function ContactSection({
   };
 
   const inputClass =
-    "w-full rounded-xl border border-white/[0.09] bg-white/[0.03] px-4 py-3 text-sm text-ink placeholder:text-ink-faint/60 outline-none transition-all duration-300 focus:border-accent/50 focus:bg-white/[0.05]";
+    "w-full rounded-xl border border-fill/[0.09] bg-fill/[0.03] px-4 py-3 text-sm text-ink placeholder:text-ink-faint/60 outline-none transition-all duration-300 focus:border-accent/50 focus:bg-fill/[0.05]";
 
   const labelClass =
     "mb-2 block font-mono text-[10px] tracking-caption text-ink-faint uppercase";
@@ -134,8 +134,8 @@ export default function ContactSection({
                     OPEN FOR CONTRACTS
                   </span>
                 </div>
-                <div className="flex items-baseline justify-between border-t border-white/[0.07] pt-5">
-                  <span className="font-display text-2xl font-semibold tracking-tight text-white transition-colors group-hover:text-accent">
+                <div className="flex items-baseline justify-between border-t border-fill/[0.07] pt-5">
+                  <span className="font-display text-2xl font-semibold tracking-tight text-ink-hi transition-colors group-hover:text-accent">
                     @ArloDel
                   </span>
                   <ArrowUpRight className="h-5 w-5 text-ink-faint transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent" strokeWidth={1.5} />
@@ -170,7 +170,7 @@ export default function ContactSection({
                   <span className="mb-6 flex h-14 w-14 items-center justify-center rounded-full border border-accent/30 bg-accent/10">
                     <CheckCircle2 className="h-6 w-6 text-accent" strokeWidth={1.5} />
                   </span>
-                  <h3 className="font-display text-2xl font-semibold tracking-tight text-white">
+                  <h3 className="font-display text-2xl font-semibold tracking-tight text-ink-hi">
                     Message sent.
                   </h3>
                   <p className="mt-3 max-w-sm text-sm leading-relaxed text-ink-muted">
@@ -195,7 +195,7 @@ export default function ContactSection({
               ) : (
                 <form onSubmit={handleSubmit} noValidate className="relative">
                   <div className="mb-7">
-                    <h3 className="font-display text-xl font-semibold tracking-tight text-white">
+                    <h3 className="font-display text-xl font-semibold tracking-tight text-ink-hi">
                       Send a message
                     </h3>
                     <p className="mt-1 text-sm text-ink-muted">
@@ -308,7 +308,7 @@ export default function ContactSection({
                       id="button-submit"
                       type="submit"
                       disabled={isSubmitting}
-                      className="group flex items-center justify-center gap-2.5 rounded-full bg-white px-7 py-3.5 text-sm font-medium text-canvas transition-all duration-300 hover:-translate-y-0.5 hover:shadow-glow disabled:cursor-not-allowed disabled:opacity-60"
+                      className="group flex items-center justify-center gap-2.5 rounded-full bg-invert px-7 py-3.5 text-sm font-medium text-invert-ink transition-all duration-300 hover:-translate-y-0.5 hover:shadow-glow disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       {formStatus === "SEALING" ? (
                         <>

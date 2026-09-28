@@ -5,6 +5,7 @@ import { Github } from "lucide-react";
 import DesktopSidebar from "@/app/components/navigation/DesktopSidebar";
 import MobileHud from "@/app/components/navigation/MobileHud";
 import AmbientBackground from "@/app/components/ui/AmbientBackground";
+import ThemeToggle from "@/app/components/ui/ThemeToggle";
 import HeroSection from "@/app/components/sections/HeroSection";
 import ProfileSection from "@/app/components/sections/ProfileSection";
 import QuestLogSection from "@/app/components/sections/QuestLogSection";
@@ -68,6 +69,9 @@ export default function Home() {
       {/* Fixed ambient parallax background */}
       <AmbientBackground />
 
+      {/* Light / dark theme toggle */}
+      <ThemeToggle />
+
       {/* Desktop glass rail navigation */}
       <DesktopSidebar activeSection={activeSection} onNavigate={handleNavigate} />
 
@@ -81,7 +85,7 @@ export default function Home() {
         <ContactSection />
 
         {/* Minimal footer */}
-        <footer className="w-full border-t border-white/[0.06] px-6 py-10 sm:px-10">
+        <footer className="w-full border-t border-fill/[0.06] px-6 py-10 sm:px-10">
           <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-5 sm:flex-row">
             <div className="flex items-center gap-3">
               <span className="glass-chip flex h-8 w-8 items-center justify-center rounded-lg font-display text-sm font-bold text-accent">

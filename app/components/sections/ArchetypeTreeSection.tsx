@@ -17,9 +17,6 @@ export interface ArchetypeTreeSectionProps {
 
 type CategoryFilter = "ALL" | "MAGE" | "KNIGHT" | "COMMANDER";
 
-const ACCENT = "#8FA6FF";
-const LINE = "rgba(255,255,255,0.10)";
-
 function normalizeCategory(
   category: ArchetypeCategory | string
 ): "Mage" | "Knight" | "Commander" | "Seeker" {
@@ -78,13 +75,14 @@ export default function ArchetypeTreeSection({
     return () => io.disconnect();
   }, []);
 
-  // anime.js: draw constellation lines + pop nodes in staggered
+  // anime.js: draw lines + pop nodes & icons in staggered
   useEffect(() => {
     const container = svgRef.current;
     if (!container || !inViewport || isReducedMotion()) return;
 
     const lines = Array.from(container.querySelectorAll<SVGLineElement>(".tree-line"));
     const nodes = Array.from(container.querySelectorAll<SVGGElement>(".tree-node"));
+    const icons = Array.from(container.querySelectorAll<HTMLElement>(".node-fa"));
 
     anime.set(lines, { strokeDashoffset: anime.setDashoffset });
     anime({
@@ -104,6 +102,18 @@ export default function ArchetypeTreeSection({
       duration: 700,
       delay: anime.stagger(60, { start: 200 }),
     });
+
+    if (icons.length > 0) {
+      anime.set(icons, { opacity: 0, scale: 0.4 });
+      anime({
+        targets: icons,
+        scale: [0.4, 1],
+        opacity: [0, 1],
+        easing: "easeOutExpo",
+        duration: 700,
+        delay: anime.stagger(60, { start: 380 }),
+      });
+    }
   }, [inViewport]);
 
   // anime.js: soft transition of the inspection card on node change
@@ -202,8 +212,8 @@ export default function ArchetypeTreeSection({
                   aria-pressed={active}
                   className={`rounded-full px-4 py-2 text-xs font-medium transition-all duration-300 ${
                     active
-                      ? "bg-white text-canvas shadow-glowSoft"
-                      : "glass-chip text-ink-faint hover:text-ink hover:border-white/20"
+                      ? "bg-invert text-invert-ink shadow-glowSoft"
+                      : "glass-chip text-ink-faint hover:text-ink hover:border-fill/20"
                   }`}
                 >
                   {CATEGORY_LABEL[cat.toLowerCase()]}
@@ -217,7 +227,7 @@ export default function ArchetypeTreeSection({
           {/* Constellation canvas */}
           <GlassCard className="relative overflow-hidden p-5 sm:p-6 lg:col-span-7" data-reveal>
             <div
-              className="mb-4 flex items-center justify-between border-b border-white/[0.07] pb-3"
+              className="mb-4 flex items-center justify-between border-b border-fill/[0.07] pb-3"
               aria-hidden="true"
             >
               <span className="font-mono text-[10px] tracking-caption text-ink-faint">
@@ -238,9 +248,31 @@ export default function ArchetypeTreeSection({
               >
                 {/* Faint radial guide rings */}
                 <g aria-hidden="true">
-                  <circle cx="400" cy="250" r="220" fill="none" stroke={LINE} strokeWidth="0.6" strokeDasharray="2 6" />
-                  <circle cx="400" cy="250" r="140" fill="none" stroke={LINE} strokeWidth="0.5" />
-                  <line x1="0" y1="250" x2="800" y2="250" stroke={LINE} strokeWidth="0.5" />
+                  <circle
+                    cx="400"
+                    cy="250"
+                    r="220"
+                    fill="none"
+                    style={{ stroke: "rgb(var(--fill) / 0.10)" }}
+                    strokeWidth="0.6"
+                    strokeDasharray="2 6"
+                  />
+                  <circle
+                    cx="400"
+                    cy="250"
+                    r="140"
+                    fill="none"
+                    style={{ stroke: "rgb(var(--fill) / 0.10)" }}
+                    strokeWidth="0.5"
+                  />
+                  <line
+                    x1="0"
+                    y1="250"
+                    x2="800"
+                    y2="250"
+                    style={{ stroke: "rgb(var(--fill) / 0.10)" }}
+                    strokeWidth="0.5"
+                  />
                 </g>
 
                 {/* Links */}
@@ -268,9 +300,13 @@ export default function ArchetypeTreeSection({
                         y1={sPos.y}
                         x2={tPos.x}
                         y2={tPos.y}
-                        stroke={isConnected ? ACCENT : LINE}
                         strokeWidth={isConnected ? 1.4 : 1}
                         strokeOpacity={isDimmed ? 0.25 : isConnected ? 0.8 : 1}
+                        style={{
+                          stroke: isConnected
+                            ? "rgb(var(--accent))"
+                            : "rgb(var(--fill) / 0.10)",
+                        }}
                       />
                     );
                   })}
@@ -316,50 +352,49 @@ export default function ArchetypeTreeSection({
                           }}
                         >
                           {/* hit area */}
-                          <circle
-                            r="40"
-                            fill="transparent"
-                            className="focus:ring-2 focus:ring-accent"
-                          />
+                          <circle r="40" fill="transparent" className="focus:ring-2 focus:ring-accent" />
                           {isInspected && (
                             <circle
                               r="28"
                               fill="none"
-                              stroke={ACCENT}
                               strokeWidth="0.8"
                               strokeDasharray="3 4"
+                              style={{ stroke: "rgb(var(--accent))" }}
                             />
                           )}
+                          {/* node disk: --invert => white in dark mode, ink in light mode */}
                           <circle
                             r={isInspected ? 19 : 16}
-                            fill="#101014"
-                            stroke={isInspected ? ACCENT : "rgba(255,255,255,0.18)"}
                             strokeWidth={isInspected ? 1.6 : 1}
-                            style={{ transition: "all 0.25s ease" }}
+                            style={{
+                              fill: "rgb(var(--invert))",
+                              stroke: isInspected
+                                ? "rgb(var(--accent))"
+                                : "rgb(var(--fill) / 0.18)",
+                              transition: "all 0.25s ease",
+                            }}
                           />
                           <circle
                             r="19"
-                            fill={isInspected ? "rgba(143,166,255,0.12)" : "transparent"}
-                            style={{ transition: "fill 0.25s ease" }}
+                            style={{
+                              fill: isInspected
+                                ? "rgb(var(--accent) / 0.12)"
+                                : "transparent",
+                              transition: "fill 0.25s ease",
+                            }}
                           />
-                          <text
-                            x="0"
-                            y="4"
-                            textAnchor="middle"
-                            fontSize="10"
-                            fill={isInspected ? ACCENT : "rgba(244,244,245,0.8)"}
-                            className="select-none pointer-events-none font-mono"
-                          >
-                            {node.icon}
-                          </text>
                           <text
                             x="0"
                             y="36"
                             textAnchor="middle"
                             fontSize="10"
-                            fill={isInspected ? ACCENT : "rgba(244,244,245,0.55)"}
                             className="pointer-events-none select-none font-mono"
-                            style={{ letterSpacing: "0.08em" }}
+                            style={{
+                              fill: isInspected
+                                ? "rgb(var(--accent))"
+                                : "rgb(var(--ink) / 0.55)",
+                              letterSpacing: "0.08em",
+                            }}
                           >
                             {node.name.toUpperCase()}
                           </text>
@@ -369,6 +404,44 @@ export default function ArchetypeTreeSection({
                   })}
                 </g>
               </svg>
+
+              {/* Font Awesome skill icons — HTML overlay mapped 1:1 onto the
+                  SVG viewBox (container keeps the same 8:5 aspect ratio) */}
+              <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+                {nodes.map((node) => {
+                  const isSelected = selectedNode?.id === node.id;
+                  const isHovered = hoveredNode?.id === node.id;
+                  const isInspected = isSelected || isHovered;
+                  const isVisibleInFilter = isNodeVisibleInFilter(node);
+                  return (
+                    <span
+                      key={node.id}
+                      className="absolute z-10"
+                      style={{
+                        left: `${(node.x ?? 400) / 8}%`,
+                        top: `${(node.y ?? 250) / 5}%`,
+                        transform: "translate(-50%, -50%)",
+                        opacity: isVisibleInFilter ? 1 : 0.2,
+                        transition: "opacity 0.3s ease",
+                      }}
+                    >
+                      <span
+                        className="node-fa flex h-6 w-6 items-center justify-center"
+                        style={{
+                          color: isInspected
+                            ? "rgb(var(--accent))"
+                            : "rgb(var(--ink) / 0.8)",
+                        }}
+                      >
+                        <i
+                          className={`${node.icon} text-sm`}
+                          aria-hidden="true"
+                        />
+                      </span>
+                    </span>
+                  );
+                })}
+              </div>
             </div>
           </GlassCard>
 
@@ -384,9 +457,17 @@ export default function ArchetypeTreeSection({
                 </span>
               </div>
 
-              <h3 className="mt-5 font-display text-2xl font-semibold tracking-tight text-white">
-                {inspectedNode?.name ?? "—"}
-              </h3>
+              <div className="mt-5 flex items-center gap-3">
+                <span
+                  className="flex h-10 w-10 items-center justify-center rounded-xl border border-fill/[0.08] bg-fill/[0.04]"
+                  style={{ color: "rgb(var(--accent))" }}
+                >
+                  <i className={`${inspectedNode?.icon ?? "fa-solid fa-circle"} text-base`} aria-hidden="true" />
+                </span>
+                <h3 className="font-display text-2xl font-semibold tracking-tight text-ink-hi">
+                  {inspectedNode?.name ?? "—"}
+                </h3>
+              </div>
               <p className="mt-1 font-mono text-[10px] tracking-caption text-ink-faint uppercase">
                 {CATEGORY_LABEL[inspectedCategory.toLowerCase()]} track
               </p>
@@ -401,7 +482,7 @@ export default function ArchetypeTreeSection({
                     {inspectedLevel}/{inspectedMaxLevel}
                   </span>
                 </div>
-                <div className="h-1 w-full overflow-hidden rounded-full bg-white/[0.07]">
+                <div className="h-1 w-full overflow-hidden rounded-full bg-fill/[0.07]">
                   <div
                     ref={barRef}
                     className="h-full rounded-full bg-gradient-to-r from-accent/60 to-accent"
@@ -438,7 +519,7 @@ export default function ArchetypeTreeSection({
                 </div>
               </div>
 
-              <div className="flex items-center justify-between border-t border-white/[0.07] pt-4">
+              <div className="flex items-center justify-between border-t border-fill/[0.07] pt-4">
                 <div className="flex items-center gap-2">
                   <Star
                     className={`h-3.5 w-3.5 ${inspectedNode?.mastered ? "text-success" : "text-ink-faint"}`}

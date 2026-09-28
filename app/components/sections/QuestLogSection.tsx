@@ -95,15 +95,15 @@ export default function QuestLogSection({
                 onClick={() => setActiveFilter(key)}
                 className={`group flex items-center gap-2 rounded-full px-4 py-2 text-xs font-medium transition-all duration-300 ${
                   active
-                    ? "bg-white text-canvas shadow-glowSoft"
-                    : "glass-chip text-ink-faint hover:text-ink hover:border-white/20"
+                    ? "bg-invert text-invert-ink shadow-glowSoft"
+                    : "glass-chip text-ink-faint hover:text-ink hover:border-fill/20"
                 }`}
                 aria-pressed={active}
               >
                 {label}
                 <span
                   className={`font-mono text-[10px] tabular-nums ${
-                    active ? "text-canvas/60" : "text-ink-faint"
+                    active ? "text-invert-ink/60" : "text-ink-faint"
                   }`}
                 >
                   {count}
@@ -178,7 +178,7 @@ export default function QuestLogSection({
                 </div>
 
                 {/* Title block */}
-                <h3 className="font-display text-xl font-semibold tracking-tight text-white transition-colors group-hover:text-accent">
+                <h3 className="font-display text-xl font-semibold tracking-tight text-ink-hi transition-colors group-hover:text-accent">
                   {project.name}
                 </h3>
                 {project.subtitle && (
@@ -203,7 +203,7 @@ export default function QuestLogSection({
                         className={`rounded-md px-2 py-0.5 font-mono text-[10px] transition-all duration-200 ${
                           isHighlighted
                             ? "bg-accent/20 text-accent-strong border border-accent/50"
-                            : "bg-white/[0.04] text-ink-faint border border-white/[0.06]"
+                            : "bg-fill/[0.04] text-ink-faint border border-fill/[0.06]"
                         }`}
                       >
                         {tech}
@@ -213,7 +213,7 @@ export default function QuestLogSection({
                 </div>
 
                 {/* Links */}
-                <div className="mt-6 flex items-center justify-between border-t border-white/[0.07] pt-4">
+                <div className="mt-6 flex items-center justify-between border-t border-fill/[0.07] pt-4">
                   {liveUrl ? (
                     <a
                       href={liveUrl}
