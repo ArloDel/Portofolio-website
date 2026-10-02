@@ -115,16 +115,25 @@ export interface ArchetypeGraphData {
 // 4. Experience Types
 // ==========================================
 
+export type JourneyCategory =
+  | "work"
+  | "internship"
+  | "education"
+  | "bootcamp"
+  | "organization";
+
 export interface JourneyEntry {
   id: string;
   period: string;
   title: string;
-  organization: string;
   role: string;
+  organization: string;
   location?: string;
   summary: string;
   achievements?: string[];
   technologies?: string[];
+  category?: JourneyCategory;
+  categoryLabel?: string;
 }
 
 export type JourneyChapter = JourneyEntry;

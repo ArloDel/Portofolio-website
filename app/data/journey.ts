@@ -2,48 +2,133 @@ import { JourneyEntry } from '@/app/types';
 
 export const JOURNEY_DATA: JourneyEntry[] = [
   {
-    id: "chapter-academic",
-    period: "2021 — Present",
-    title: "Academic foundations",
+    id: "journey-freelance",
+    period: "June 2025 — Present",
+    title: "Freelance Web Developer",
+    role: "Web Developer",
+    organization: "Freelance",
+    location: "Sidoarjo, Indonesia",
+    summary:
+      "Freelance developer with hands-on experience building web-based business solutions — designing and developing systems that improve operational efficiency and automate business processes.",
+    achievements: [
+      "Designed and built web-based business solutions that improve operational efficiency and automate business processes.",
+      "Developed a live Warehouse Inventory Management System for stock tracking and logistics management.",
+      "Built an online boarding-house reservation system with digital room booking and rental management.",
+    ],
+    technologies: ["PHP", "Laravel", "JavaScript", "MySQL", "HTML", "CSS", "Business Automation"],
+    category: "work",
+    categoryLabel: "WORK EXPERIENCE",
+  },
+  {
+    id: "journey-sekawan-media",
+    period: "October 2024 — January 2025",
+    title: "Back-end Developer (Internship)",
+    role: "Back-end Developer",
+    organization: "Sekawan Media",
+    location: "Malang, Indonesia",
+    summary:
+      "Contributed to designing efficient, scalable back-end architecture, building relational database schemas, and engineering RESTful APIs.",
+    achievements: [
+      "Collaborated on designing scalable and efficient back-end architecture.",
+      "Created database schemas and defined table relationships with a focus on data integrity.",
+      "Developed RESTful APIs serving mobile and web clients.",
+      "Built and maintained the admin interface for internal data operations.",
+    ],
+    technologies: ["PHP", "RESTful APIs", "Database Design", "MySQL", "Backend Architecture"],
+    category: "internship",
+    categoryLabel: "INTERNSHIP",
+  },
+  {
+    id: "journey-luar-sekolah",
+    period: "September 2024 — December 2024",
+    title: "Web Developer (Remote Internship)",
+    role: "Web Developer",
+    organization: "Luar Sekolah",
+    location: "Sidoarjo, Indonesia (Remote)",
+    summary:
+      "Developed responsive user interfaces, implemented business logic in PHP, and managed databases efficiently.",
+    achievements: [
+      "Delivered a user-friendly, responsive interface adaptable to various devices for an optimal user experience.",
+      "Implemented business logic in PHP to support website processes and functionality.",
+      "Designed and managed databases to store, retrieve, and manipulate data efficiently.",
+    ],
+    technologies: ["PHP", "MySQL", "Responsive UI", "Web Development", "Database Management"],
+    category: "internship",
+    categoryLabel: "INTERNSHIP",
+  },
+  {
+    id: "journey-bpbd-surabaya",
+    period: "January 2023 — July 2023",
+    title: "Back-End Developer (Internship)",
+    role: "Back-End Developer",
+    organization: "BPBD Kota Surabaya",
+    location: "Surabaya, Indonesia",
+    summary:
+      "Developed the official BPBD Surabaya website, designed disaster-management database schemas, and built the internal admin dashboard.",
+    achievements: [
+      "Prepared and structured the database for the official BPBD Surabaya website.",
+      "Designed and implemented relational database schemas to support data-management needs.",
+      "Developed an admin dashboard for managing website content and internal data.",
+      "Built CRUD features to manage disaster information, activity documentation, and reports.",
+      "Collaborated with the IT team to align system features with organizational requirements.",
+      "Conducted system testing to ensure proper functionality.",
+    ],
+    technologies: ["PHP", "MySQL", "Relational Database", "Admin Dashboard", "CRUD", "System Testing"],
+    category: "internship",
+    categoryLabel: "INTERNSHIP",
+  },
+  {
+    id: "journey-dicoding",
+    period: "August 2022 — February 2023",
+    title: "Front-End and Back-End Developer",
+    role: "Independent Study (SIB) Cohort Member",
+    organization: "Dicoding Indonesia",
+    location: "Sidoarjo, Indonesia",
+    summary:
+      "Intensive Kampus Merdeka Independent Study (SIB) Batch 3 program focused on mastering modern front-end and back-end web development technologies.",
+    achievements: [
+      "Completed an intensive, industry-standard curriculum in modern front-end and back-end web development.",
+      "Mastered JavaScript programming, RESTful API architecture, and backend integration.",
+      "Built a final web-application project meeting high standards of testing, accessibility, and performance.",
+    ],
+    technologies: ["JavaScript", "Front-End", "Back-End", "RESTful APIs", "Node.js", "Git"],
+    category: "bootcamp",
+    categoryLabel: "BOOTCAMP",
+  },
+  {
+    id: "journey-upn",
+    period: "2020 — 2024",
+    title: "Bachelor of Information Systems",
     role: "Undergraduate Student",
     organization: "UPN 'Veteran' Jawa Timur",
     location: "Surabaya, Indonesia",
-    summary: "Studying information systems with a focus on software engineering practice, database design and algorithmic problem solving.",
+    summary:
+      "Graduated with a 3.70/4.00 GPA in Information Systems, with strong foundations in systems analysis, database management, web application development, business processes, and SDLC methodology.",
     achievements: [
-      "Built a solid grounding in computer science and software engineering fundamentals.",
-      "Shipped the Olympiade competition platform used for real academic events.",
-      "Maintained strong academic standing while also working on commercial contracts."
+      "Graduated with a 3.70/4.00 GPA in Information Systems.",
+      "Developed a deep understanding of business processes, systems analysis, and information management.",
+      "Mastered programming technologies including PHP/Laravel, JavaScript, MySQL, and SDLC methodology.",
+      "Analyzed real-world problems logically and analytically to deliver efficient digital solutions.",
     ],
-    technologies: ["Database Systems", "Software Engineering", "Algorithms", "PHP", "TypeScript"]
+    technologies: ["Information Systems", "PHP / Laravel", "JavaScript", "MySQL", "Systems Analysis", "SDLC"],
+    category: "education",
+    categoryLabel: "EDUCATION",
   },
   {
-    id: "chapter-freelance",
-    period: "2022 — Present",
-    title: "Freelance engineering practice",
-    role: "Full-Stack Developer",
-    organization: "Independent Contractor",
-    location: "Remote / Worldwide",
-    summary: "Running an independent freelance practice delivering full-stack web applications, custom CMS dashboards and high-conversion client projects.",
+    id: "journey-bem",
+    period: "2021",
+    title: "Faculty Orientation 2021 Committee",
+    role: "Equipment Staff & Zoom Operator",
+    organization: "BEM Faculty of Computer Science",
+    location: "Surabaya, Indonesia",
+    summary:
+      "Active committee member of the 2021 Faculty Orientation (Ospek) under the Faculty of Computer Science student executive board (BEM).",
     achievements: [
-      "Architected and deployed Atelier-Senja with Next.js.",
-      "Built inventory and storefront platforms with Laravel and Filament.",
-      "Delivered precise, responsive interfaces across commercial and consumer products."
+      "Prepared all technical equipment and logistics to keep the faculty orientation running smoothly.",
+      "Served as technical Zoom operator, managing virtual rooms and keeping the online broadcast of the event stable.",
     ],
-    technologies: ["Next.js", "Laravel", "Filament", "Tailwind CSS", "MySQL", "Vercel"]
+    technologies: ["Event Logistics", "Technical Operations", "Zoom Operator", "Teamwork"],
+    category: "organization",
+    categoryLabel: "ORGANIZATION",
   },
-  {
-    id: "chapter-opensource",
-    period: "2023 — Present",
-    title: "Open-source contributions",
-    role: "Open-Source Developer",
-    organization: "GitHub (@ArloDel)",
-    location: "Global",
-    summary: "Building public developer tools and small simulators, and contributing useful utilities back to the community.",
-    achievements: [
-      "Engineered the GundamBuilder configuration simulator.",
-      "Developing arlo-clipper for web content clipping and documentation.",
-      "Keeping a clean git history, readable code and reproducible builds on every repository."
-    ],
-    technologies: ["JavaScript", "Node.js", "Git", "GitHub Actions"]
-  }
 ];
