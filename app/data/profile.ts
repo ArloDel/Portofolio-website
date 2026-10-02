@@ -1,7 +1,7 @@
 import { ProfileData } from '@/app/types';
 
 export const PROFILE_DATA: ProfileData = {
-  name: "Hakeeem",
+  name: "Alif Nur Rahman Hakim",
   role: "Freelance Developer",
   title: "Full-Stack Developer",
   institution: "Universitas Pembangunan Nasional 'Veteran' Jawa Timur",
