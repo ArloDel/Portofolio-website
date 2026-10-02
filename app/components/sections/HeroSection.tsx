@@ -15,7 +15,7 @@ interface HeroSectionProps {
 const NAME = "Hakeeem";
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
-  name = "Hakeeem",
+  name = "Alif Nur Rahman Hakim",
   role = "Full-Stack Developer",
   onEmbark,
   onNavigate,
