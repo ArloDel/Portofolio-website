@@ -2,8 +2,11 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import anime from "animejs";
-import { ArrowUpRight, Github, Check } from "lucide-react";
-import { PROJECTS_DATA } from "@/app/data/projects";
+import { ArrowUpRight, Github, Check, RefreshCw } from "lucide-react";
+import {
+  LIVE_PROJECTS_DATA,
+  fetchLiveGithubProjects,
+} from "@/app/data/projects";
 import { ProjectData } from "@/app/types";
 import { useReveal, isReducedMotion } from "@/app/lib/motion";
 import SectionHeading from "@/app/components/ui/SectionHeading";
@@ -14,32 +17,73 @@ export interface QuestLogSectionProps {
   highlightedSkill?: string | null;
 }
 
-type FilterStatus = "ALL" | "COMPLETED" | "IN PROGRESS";
+type FilterCategory = "ALL" | "FLAGSHIP" | "CLIENT" | "SHIPPED";
 
-const FILTERS: { key: FilterStatus; label: string }[] = [
-  { key: "ALL", label: "All work" },
-  { key: "COMPLETED", label: "Shipped" },
-  { key: "IN PROGRESS", label: "In progress" },
+const FILTERS: { key: FilterCategory; label: string }[] = [
+  { key: "ALL", label: "All live" },
+  { key: "FLAGSHIP", label: "Flagship" },
+  { key: "CLIENT", label: "Client" },
 ];
 
 export default function QuestLogSection({
-  projects = PROJECTS_DATA,
+  projects,
   highlightedSkill = null,
 }: QuestLogSectionProps) {
   const rootRef = useRef<HTMLElement | null>(null);
   const gridRef = useRef<HTMLDivElement | null>(null);
-  const [activeFilter, setActiveFilter] = useState<FilterStatus>("ALL");
+  const [liveProjects, setLiveProjects] = useState<ProjectData[]>(() =>
+    (projects ?? LIVE_PROJECTS_DATA).filter((p) => Boolean(p.liveUrl && p.liveUrl.trim()))
+  );
+  const [isSyncing, setIsSyncing] = useState<boolean>(false);
+  const [activeFilter, setActiveFilter] = useState<FilterCategory>("ALL");
   const [firstPaint, setFirstPaint] = useState(true);
 
   useReveal(rootRef, "[data-reveal]", { translateY: 26 });
 
-  const filteredProjects = projects.filter((project) => {
+  // Auto-sync live repositories from GitHub (@ArloDel)
+  useEffect(() => {
+    if (projects) {
+      setLiveProjects(projects.filter((p) => Boolean(p.liveUrl && p.liveUrl.trim())));
+      return;
+    }
+
+    let cancelled = false;
+    setIsSyncing(true);
+
+    fetchLiveGithubProjects()
+      .then((synced) => {
+        if (!cancelled && synced.length > 0) {
+          setLiveProjects(synced);
+        }
+      })
+      .catch(() => {
+        // Silently keep static LIVE_PROJECTS_DATA fallback on network/rate-limit error
+      })
+      .finally(() => {
+        if (!cancelled) setIsSyncing(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [projects]);
+
+  const filteredProjects = liveProjects.filter((project) => {
     if (activeFilter === "ALL") return true;
-    const normalizedStatus = project.status.replace("_", " ");
-    return normalizedStatus === activeFilter;
+    return (project.rank || "SHIPPED").toUpperCase() === activeFilter;
   });
 
-  // anime.js: re-stagger the grid whenever the filter changes
+  // Dynamically include "Shipped / Other" tab if new GitHub repos with non-Flagship/Client rank arrive
+  const extraShippedCount = liveProjects.filter(
+    (p) => !["FLAGSHIP", "CLIENT"].includes((p.rank || "").toUpperCase())
+  ).length;
+
+  const availableFilters: { key: FilterCategory; label: string }[] =
+    extraShippedCount > 0
+      ? [...FILTERS, { key: "SHIPPED", label: "Open web" }]
+      : FILTERS;
+
+  // anime.js: re-stagger the grid whenever the filter or synced repo list changes
   useEffect(() => {
     if (firstPaint) {
       setFirstPaint(false);
@@ -49,7 +93,7 @@ export default function QuestLogSection({
     if (!grid) return;
 
     const cards = Array.from(grid.querySelectorAll<HTMLElement>("[data-project-card]"));
-    if (isReducedMotion()) return;
+    if (isReducedMotion() || cards.length === 0) return;
 
     cards.forEach((card) => anime.set(card, { opacity: 0, translateY: 18, scale: 0.985 }));
     anime({
@@ -61,7 +105,7 @@ export default function QuestLogSection({
       duration: 550,
       delay: anime.stagger(60),
     });
-  }, [activeFilter]);
+  }, [activeFilter, liveProjects.length]);
 
   return (
     <section
@@ -75,42 +119,57 @@ export default function QuestLogSection({
           index="02"
           kicker="SELECTED WORK"
           title="Shipped with intent."
-          description="Production deployments, open-source tools and full-scale platforms — each one delivered end to end."
+          description="Live production deployments synced directly from GitHub — only repositories with an active web deployment appear here."
         />
 
-        {/* Filter chips */}
-        <div data-reveal className="mb-10 flex flex-wrap items-center gap-2.5">
-          {FILTERS.map(({ key, label }) => {
-            const count =
-              key === "ALL"
-                ? projects.length
-                : projects.filter(
-                    (p) => p.status.replace("_", " ") === key
-                  ).length;
-            const active = activeFilter === key;
-            return (
-              <button
-                key={key}
-                type="button"
-                onClick={() => setActiveFilter(key)}
-                className={`group flex items-center gap-2 rounded-full px-4 py-2 text-xs font-medium transition-all duration-300 ${
-                  active
-                    ? "bg-invert text-invert-ink shadow-glowSoft"
-                    : "glass-chip text-ink-faint hover:text-ink hover:border-fill/20"
-                }`}
-                aria-pressed={active}
-              >
-                {label}
-                <span
-                  className={`font-mono text-[10px] tabular-nums ${
-                    active ? "text-invert-ink/60" : "text-ink-faint"
+        {/* Filter chips + GitHub auto-sync status */}
+        <div
+          data-reveal
+          className="mb-10 flex flex-wrap items-center justify-between gap-4"
+        >
+          <div className="flex flex-wrap items-center gap-2.5">
+            {availableFilters.map(({ key, label }) => {
+              const count =
+                key === "ALL"
+                  ? liveProjects.length
+                  : liveProjects.filter(
+                      (p) => (p.rank || "SHIPPED").toUpperCase() === key
+                    ).length;
+              const active = activeFilter === key;
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => setActiveFilter(key)}
+                  className={`group flex items-center gap-2 rounded-full px-4 py-2 text-xs font-medium transition-all duration-300 ${
+                    active
+                      ? "bg-invert text-invert-ink shadow-glowSoft"
+                      : "glass-chip text-ink-faint hover:text-ink hover:border-fill/20"
                   }`}
+                  aria-pressed={active}
                 >
-                  {count}
-                </span>
-              </button>
-            );
-          })}
+                  {label}
+                  <span
+                    className={`font-mono text-[10px] tabular-nums ${
+                      active ? "text-invert-ink/60" : "text-ink-faint"
+                    }`}
+                  >
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="flex items-center gap-2 font-mono text-[10px] tracking-caption text-ink-faint">
+            <RefreshCw
+              className={`h-3 w-3 text-accent ${isSyncing ? "animate-spin" : ""}`}
+              strokeWidth={1.5}
+            />
+            <span>
+              {isSyncing ? "SYNCING @ARLODEL..." : "AUTO-SYNCED • LIVE SITES ONLY"}
+            </span>
+          </div>
         </div>
 
         {/* Cards grid */}
@@ -119,28 +178,11 @@ export default function QuestLogSection({
           className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
         >
           {filteredProjects.map((project) => {
-            const isCompleted =
-              project.status === "COMPLETED" ||
-              (project.status as string) === "COMPLETED";
             const techStack = project.stack || project.techStack || [];
-            const liveUrl =
-              project.liveUrl ||
-              (project.link?.startsWith("https://") &&
-              !project.link.includes("github.com")
-                ? project.link
-                : undefined);
+            const liveUrl = project.liveUrl || project.link;
             const githubUrl =
-              project.githubUrl ||
-              (project.link?.includes("github.com")
-                ? project.link
-                : "https://github.com/ArloDel");
-            const rank =
-              project.rank ||
-              (project.id === "atelier-senja"
-                ? "FLAGSHIP"
-                : project.id === "olympiade-app" || project.id === "comicgarage"
-                ? "CLIENT"
-                : "EXPERIMENT");
+              project.githubUrl || "https://github.com/ArloDel";
+            const rank = project.rank || "SHIPPED";
 
             return (
               <GlassCard
@@ -152,28 +194,15 @@ export default function QuestLogSection({
               >
                 {/* Top meta row */}
                 <div className="mb-5 flex items-center justify-between">
-                  <span
-                    className={`glass-chip rounded-md px-2 py-0.5 font-mono text-[9px] tracking-widest ${
-                      isCompleted ? "text-ink-muted" : "text-accent"
-                    }`}
-                  >
+                  <span className="glass-chip rounded-md px-2 py-0.5 font-mono text-[9px] tracking-widest text-ink-muted">
                     {rank}
                   </span>
 
                   <span className="flex items-center gap-1.5 font-mono text-[9px] tracking-widest text-ink-faint">
-                    {isCompleted ? (
-                      <>
-                        <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-success/15">
-                          <Check className="h-2.5 w-2.5 text-success" strokeWidth={2.5} />
-                        </span>
-                        SHIPPED
-                      </>
-                    ) : (
-                      <>
-                        <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-accent" />
-                        BUILDING
-                      </>
-                    )}
+                    <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-success/15">
+                      <Check className="h-2.5 w-2.5 text-success" strokeWidth={2.5} />
+                    </span>
+                    LIVE
                   </span>
                 </div>
 
@@ -248,7 +277,7 @@ export default function QuestLogSection({
         {/* Quiet footer note */}
         <div data-reveal className="mt-10 text-center">
           <p className="font-mono text-[10px] tracking-caption text-ink-faint">
-            MORE EXPERIMENTS LIVE IN THE REPOSITORY — @ARLODEL
+            AUTOMATICALLY DISPLAYS @ARLODEL REPOSITORIES WITH AN ACTIVE DEPLOYMENT URL
           </p>
         </div>
       </div>
