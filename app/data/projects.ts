@@ -121,8 +121,24 @@ function normalizeLiveUrl(raw?: string | null): string | undefined {
   const withProtocol = /^https?:\/\//i.test(trimmed)
     ? trimmed
     : `https://${trimmed}`;
-  if (withProtocol.includes("github.com/")) return undefined;
-  return withProtocol;
+
+  try {
+    const parsed = new URL(withProtocol);
+    // Strict protocol check (only http and https allowed, prevent javascript:, data:, etc.)
+    if (parsed.protocol !== "https:" && parsed.protocol !== "http:") {
+      return undefined;
+    }
+    // Prevent github repo self-links from being treated as live sites
+    if (parsed.hostname.toLowerCase() === "github.com" || parsed.hostname.toLowerCase().endsWith(".github.com")) {
+      // Allow username.github.io pages, but ignore github.com repo links
+      if (parsed.hostname.toLowerCase() === "github.com") {
+        return undefined;
+      }
+    }
+    return parsed.href;
+  } catch {
+    return undefined;
+  }
 }
 
 function buildStackFromRepo(repo: GithubRepoResponse, fallback?: string[]): string[] {
@@ -148,79 +164,87 @@ function buildStackFromRepo(repo: GithubRepoResponse, fallback?: string[]): stri
 export async function fetchLiveGithubProjects(
   username: string = GITHUB_USERNAME
 ): Promise<ProjectData[]> {
-  const res = await fetch(
-    `https://api.github.com/users/${encodeURIComponent(username)}/repos?per_page=100&sort=updated`,
-    {
-      headers: {
-        Accept: "application/vnd.github+json",
-      },
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 8000); // 8-second request timeout
+
+  try {
+    const res = await fetch(
+      `https://api.github.com/users/${encodeURIComponent(username)}/repos?per_page=100&sort=updated`,
+      {
+        signal: controller.signal,
+        headers: {
+          Accept: "application/vnd.github+json",
+        },
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error(`GitHub API responded with ${res.status}`);
     }
-  );
 
-  if (!res.ok) {
-    throw new Error(`GitHub API responded with ${res.status}`);
-  }
-
-  const repos: GithubRepoResponse[] = await res.json();
-  const curatedByKey = new Map<string, ProjectData>();
-  PROJECTS_DATA.forEach((p) => {
-    curatedByKey.set(p.id.toLowerCase(), p);
-    curatedByKey.set(p.name.toLowerCase(), p);
-  });
-
-  const syncedMap = new Map<string, ProjectData>();
-
-  // 1. Seed with curated projects that already have a known liveUrl
-  LIVE_PROJECTS_DATA.forEach((p) => {
-    syncedMap.set(p.name.toLowerCase(), { ...p });
-  });
-
-  // 2. Merge / append all non-fork GitHub repos that have a live website (`homepage`)
-  for (const repo of repos) {
-    if (repo.fork) continue;
-
-    const key = repo.name.toLowerCase();
-    const curated = curatedByKey.get(key);
-    const liveUrl = normalizeLiveUrl(repo.homepage) || curated?.liveUrl;
-
-    // Strictly include ONLY repositories with a live website
-    if (!liveUrl) continue;
-
-    const stack =
-      curated?.stack && curated.stack.length > 0
-        ? curated.stack
-        : buildStackFromRepo(repo, curated?.techStack);
-
-    const rank =
-      curated?.rank ||
-      (repo.topics?.includes("flagship")
-        ? "FLAGSHIP"
-        : repo.topics?.includes("client")
-        ? "CLIENT"
-        : "LIVEDEPLOYMENT");
-
-    syncedMap.set(key, {
-      id: curated?.id || key,
-      name: curated?.name || repo.name,
-      rank: rank === "LIVEDEPLOYMENT" ? "SHIPPED" : rank,
-      status: "COMPLETED",
-      subtitle:
-        curated?.subtitle ||
-        (repo.language ? `${repo.language} web application` : "Live web deployment"),
-      description:
-        curated?.description ||
-        repo.description ||
-        `Production web deployment for ${repo.name}.`,
-      techStack: curated?.techStack || stack,
-      stack,
-      link: liveUrl,
-      liveUrl,
-      githubUrl: repo.html_url || curated?.githubUrl || `https://github.com/${username}/${repo.name}`,
-      completedYear:
-        curated?.completedYear ||
-        (repo.pushed_at ? new Date(repo.pushed_at).getFullYear().toString() : undefined),
+    const repos: GithubRepoResponse[] = await res.json();
+    const curatedByKey = new Map<string, ProjectData>();
+    PROJECTS_DATA.forEach((p) => {
+      curatedByKey.set(p.id.toLowerCase(), p);
+      curatedByKey.set(p.name.toLowerCase(), p);
     });
-  }
 
-  return Array.from(syncedMap.values());
+    const syncedMap = new Map<string, ProjectData>();
+
+    // 1. Seed with curated projects that already have a known liveUrl
+    LIVE_PROJECTS_DATA.forEach((p) => {
+      syncedMap.set(p.name.toLowerCase(), { ...p });
+    });
+
+    // 2. Merge / append all non-fork GitHub repos that have a live website (`homepage`)
+    for (const repo of repos) {
+      if (repo.fork) continue;
+
+      const key = repo.name.toLowerCase();
+      const curated = curatedByKey.get(key);
+      const liveUrl = normalizeLiveUrl(repo.homepage) || curated?.liveUrl;
+
+      // Strictly include ONLY repositories with a verified live website
+      if (!liveUrl) continue;
+
+      const stack =
+        curated?.stack && curated.stack.length > 0
+          ? curated.stack
+          : buildStackFromRepo(repo, curated?.techStack);
+
+      const rank =
+        curated?.rank ||
+        (repo.topics?.includes("flagship")
+          ? "FLAGSHIP"
+          : repo.topics?.includes("client")
+          ? "CLIENT"
+          : "LIVEDEPLOYMENT");
+
+      syncedMap.set(key, {
+        id: curated?.id || key,
+        name: curated?.name || repo.name,
+        rank: rank === "LIVEDEPLOYMENT" ? "SHIPPED" : rank,
+        status: "COMPLETED",
+        subtitle:
+          curated?.subtitle ||
+          (repo.language ? `${repo.language} web application` : "Live web deployment"),
+        description:
+          curated?.description ||
+          repo.description ||
+          `Production web deployment for ${repo.name}.`,
+        techStack: curated?.techStack || stack,
+        stack,
+        link: liveUrl,
+        liveUrl,
+        githubUrl: repo.html_url || curated?.githubUrl || `https://github.com/${username}/${repo.name}`,
+        completedYear:
+          curated?.completedYear ||
+          (repo.pushed_at ? new Date(repo.pushed_at).getFullYear().toString() : undefined),
+      });
+    }
+
+    return Array.from(syncedMap.values());
+  } finally {
+    clearTimeout(timeoutId);
+  }
 }

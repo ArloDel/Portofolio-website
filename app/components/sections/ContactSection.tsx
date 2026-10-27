@@ -31,12 +31,14 @@ export default function ContactSection({
     subject: SUBJECT_OPTIONS[0],
     message: "",
   });
+  const [honeypot, setHoneypot] = useState<string>("");
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [formStatus, setFormStatus] = useState<FormStatus>("IDLE");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const sanitizeInput = (text: string): string => {
     return text
+      .trim()
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;")
@@ -49,16 +51,28 @@ export default function ContactSection({
     const trimmedEmail = formData.email.trim();
     const trimmedMessage = formData.message.trim();
 
-    if (!trimmedName) errors.name = "Your name is required.";
+    if (!trimmedName) {
+      errors.name = "Your name is required.";
+    } else if (trimmedName.length > 100) {
+      errors.name = "Name must not exceed 100 characters.";
+    }
+
     if (!trimmedEmail) {
       errors.email = "An email address is required.";
+    } else if (trimmedEmail.length > 150) {
+      errors.email = "Email must not exceed 150 characters.";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
       errors.email = "Please provide a valid email address.";
     }
+
+    if (!SUBJECT_OPTIONS.includes(formData.subject)) {
+      errors.subject = "Please select a valid subject option.";
+    }
+
     if (!trimmedMessage) {
       errors.message = "A message cannot be empty.";
-    } else if (trimmedMessage.length > 10000) {
-      errors.message = "Message exceeds the 10,000 character limit.";
+    } else if (trimmedMessage.length > 5000) {
+      errors.message = "Message exceeds the 5,000 character limit.";
     }
 
     setFormErrors(errors);
@@ -68,15 +82,26 @@ export default function ContactSection({
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isSubmitting || formStatus === "SEALING") return;
+
+    // Honeypot check: if bot filled this hidden field, fail silently
+    if (honeypot) {
+      setFormStatus("CONFIRMED");
+      return;
+    }
+
     if (!validateForm()) return;
 
     setIsSubmitting(true);
     setFormStatus("SEALING");
 
-    sanitizeInput(formData.name);
-    sanitizeInput(formData.email);
-    sanitizeInput(formData.subject);
-    sanitizeInput(formData.message);
+    const sanitizedData: ContactFormData = {
+      name: sanitizeInput(formData.name),
+      email: sanitizeInput(formData.email),
+      subject: sanitizeInput(formData.subject),
+      message: sanitizeInput(formData.message),
+    };
+
+    setFormData(sanitizedData);
 
     setTimeout(() => {
       setFormStatus("CONFIRMED");
@@ -91,6 +116,7 @@ export default function ContactSection({
       subject: SUBJECT_OPTIONS[0],
       message: "",
     });
+    setHoneypot("");
     setFormErrors({});
     setFormStatus("IDLE");
     setIsSubmitting(false);
@@ -194,6 +220,20 @@ export default function ContactSection({
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} noValidate className="relative">
+                  {/* Anti-spam honeypot hidden field */}
+                  <div className="hidden" aria-hidden="true">
+                    <label htmlFor="company_website_hp">Do not fill this field</label>
+                    <input
+                      type="text"
+                      id="company_website_hp"
+                      name="company_website_hp"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      value={honeypot}
+                      onChange={(e) => setHoneypot(e.target.value)}
+                    />
+                  </div>
+
                   <div className="mb-7">
                     <h3 className="font-display text-xl font-semibold tracking-tight text-ink-hi">
                       Send a message
@@ -214,6 +254,7 @@ export default function ContactSection({
                         name="name"
                         type="text"
                         required
+                        maxLength={100}
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         placeholder="Your name"
@@ -236,6 +277,7 @@ export default function ContactSection({
                         name="email"
                         type="email"
                         required
+                        maxLength={150}
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         placeholder="name@company.com"
@@ -282,7 +324,7 @@ export default function ContactSection({
                         Message
                       </label>
                       <span className="mb-2 font-mono text-[10px] text-ink-faint tabular-nums">
-                        {formData.message.length} / 10,000
+                        {formData.message.length} / 5,000
                       </span>
                     </div>
                     <textarea
@@ -290,6 +332,7 @@ export default function ContactSection({
                       name="message"
                       rows={5}
                       required
+                      maxLength={5000}
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       placeholder="Write about your project, timeline or inquiry…"
