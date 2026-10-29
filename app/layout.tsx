@@ -25,9 +25,47 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://arlodel.pages.dev"),
   title: "Hakeeem | Full-Stack Developer",
   description:
-    "Portfolio of Hakeeem — Student of Information Systems & freelance full-stack developer crafting minimal, resilient web experiences.",
+    "Portfolio of Alif Nur Rahman Hakim (Hakeeem) — Information Systems student & freelance full-stack developer crafting minimal, resilient web experiences.",
+  keywords: [
+    "Alif Nur Rahman Hakim",
+    "Hakeeem",
+    "ArloDel",
+    "Full-Stack Developer",
+    "Next.js",
+    "Laravel",
+    "TypeScript",
+    "Tailwind CSS",
+    "Web Developer Surabaya",
+  ],
+  authors: [{ name: "Alif Nur Rahman Hakim", url: "https://github.com/ArloDel" }],
+  creator: "Alif Nur Rahman Hakim",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://arlodel.pages.dev",
+    title: "Alif Nur Rahman Hakim | Full-Stack Developer",
+    description:
+      "Crafting minimal, resilient web experiences with precise UIs and clean architecture — Next.js, TypeScript & Laravel.",
+    siteName: "Hakeeem Portfolio",
+    images: [
+      {
+        url: "/og-image.svg",
+        width: 1200,
+        height: 630,
+        alt: "Alif Nur Rahman Hakim — Portfolio Preview",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Alif Nur Rahman Hakim | Full-Stack Developer",
+    description:
+      "Crafting minimal, resilient web experiences with precise UIs and clean architecture.",
+    images: ["/og-image.svg"],
+  },
   icons: {
     icon: "/icon.svg",
   },

@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="60%" fx="50%" fy="50%">
+      <stop offset="0%" stop-color="#18181B" />
+      <stop offset="100%" stop-color="#09090B" />
+    </radialGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#818CF8" />
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)" />
+
+  <!-- Subtle grid lines -->
+  <g opacity="0.06" stroke="#FFFFFF" stroke-width="1">
+    <line x1="100" y1="0" x2="100" y2="630" />
+    <line x1="300" y1="0" x2="300" y2="630" />
+    <line x1="500" y1="0" x2="500" y2="630" />
+    <line x1="700" y1="0" x2="700" y2="630" />
+    <line x1="900" y1="0" x2="900" y2="630" />
+    <line x1="1100" y1="0" x2="1100" y2="630" />
+    <line x1="0" y1="100" x2="1200" y2="100" />
+    <line x1="0" y1="200" x2="1200" y2="200" />
+    <line x1="0" y1="300" x2="1200" y2="300" />
+    <line x1="0" y1="400" x2="1200" y2="400" />
+    <line x1="0" y1="500" x2="1200" y2="500" />
+  </g>
+
+  <!-- Content -->
+  <g transform="translate(120, 160)">
+    <!-- Badge -->
+    <rect x="0" y="0" width="220" height="36" rx="18" fill="#FFFFFF" fill-opacity="0.06" stroke="#FFFFFF" stroke-opacity="0.12" />
+    <circle cx="20" cy="18" r="5" fill="#10B981" />
+    <text x="35" y="23" font-family="monospace, sans-serif" font-size="12" fill="#E4E4E7" letter-spacing="2">FULL-STACK DEV</text>
+
+    <!-- Name & Title -->
+    <text x="0" y="110" font-family="'Space Grotesk', system-ui, sans-serif" font-size="76" font-weight="700" fill="#FAFAFA" letter-spacing="-2">
+      Alif Nur Rahman Hakim
+    </text>
+
+    <text x="0" y="165" font-family="'Space Grotesk', system-ui, sans-serif" font-size="32" font-weight="500" fill="url(#accentGrad)">
+      Hakeeem — @ArloDel
+    </text>
+
+    <text x="0" y="225" font-family="system-ui, sans-serif" font-size="22" fill="#A1A1AA" width="700">
+      Crafting minimal, resilient web experiences with Next.js, TypeScript &amp; Laravel.
+    </text>
+
+    <!-- Tech Stack Pill Row -->
+    <g transform="translate(0, 270)">
+      <rect x="0" y="0" width="105" height="34" rx="8" fill="#27272A" />
+      <text x="52" y="22" font-family="monospace, sans-serif" font-size="13" fill="#E4E4E7" text-anchor="middle">Next.js</text>
+
+      <rect x="120" y="0" width="125" height="34" rx="8" fill="#27272A" />
+      <text x="182" y="22" font-family="monospace, sans-serif" font-size="13" fill="#E4E4E7" text-anchor="middle">TypeScript</text>
+
+      <rect x="260" y="0" width="95" height="34" rx="8" fill="#27272A" />
+      <text x="307" y="22" font-family="monospace, sans-serif" font-size="13" fill="#E4E4E7" text-anchor="middle">Laravel</text>
+
+      <rect x="370" y="0" width="120" height="34" rx="8" fill="#27272A" />
+      <text x="430" y="22" font-family="monospace, sans-serif" font-size="13" fill="#E4E4E7" text-anchor="middle">Tailwind CSS</text>
+    </g>
+  </g>
+</svg>
