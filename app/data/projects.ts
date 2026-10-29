@@ -157,13 +157,31 @@ function buildStackFromRepo(repo: GithubRepoResponse, fallback?: string[]): stri
   return Array.from(items).slice(0, 5);
 }
 
+const CACHE_KEY = "arlodel_live_repos_cache_v1";
+const CACHE_TTL_MS = 30 * 60 * 1000; // 30 minutes cache
+
 /**
- * Fetches public repositories for @ArloDel and returns ONLY projects
- * that have an active live website (`homepage` URL on GitHub or curated `liveUrl`).
+ * Fetches public repositories for @ArloDel with localStorage caching.
+ * Returns ONLY projects that have an active live website.
  */
 export async function fetchLiveGithubProjects(
   username: string = GITHUB_USERNAME
 ): Promise<ProjectData[]> {
+  // 1. Read from localStorage cache if fresh
+  if (typeof window !== "undefined") {
+    try {
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (cached) {
+        const { timestamp, data } = JSON.parse(cached);
+        if (Date.now() - timestamp < CACHE_TTL_MS && Array.isArray(data) && data.length > 0) {
+          return data;
+        }
+      }
+    } catch {
+      // Ignore localStorage errors (private browsing, quotas)
+    }
+  }
+
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 8000); // 8-second request timeout
 
@@ -243,7 +261,18 @@ export async function fetchLiveGithubProjects(
       });
     }
 
-    return Array.from(syncedMap.values());
+    const result = Array.from(syncedMap.values());
+
+    // Save to cache
+    if (typeof window !== "undefined" && result.length > 0) {
+      try {
+        localStorage.setItem(CACHE_KEY, JSON.stringify({ timestamp: Date.now(), data: result }));
+      } catch {
+        // Ignore cache write failure
+      }
+    }
+
+    return result;
   } finally {
     clearTimeout(timeoutId);
   }
