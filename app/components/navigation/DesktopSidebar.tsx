@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from "react";
 import anime from "animejs";
-import { Github, MapPin } from "lucide-react";
+import { FileText, Github, MapPin } from "lucide-react";
 import { isReducedMotion } from "@/app/lib/motion";
 
 export interface NavigationSectionItem {
@@ -192,6 +192,17 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
           </span>
           <span>ID — SURABAYA</span>
         </div>
+        <a
+          href="/resume.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="glass-chip group flex items-center justify-between rounded-xl px-3.5 py-2.5 transition-colors hover:border-accent/40"
+        >
+          <span className="font-mono text-[10px] tracking-wider text-ink-muted group-hover:text-ink">
+            RESUME / CV
+          </span>
+          <FileText className="h-3.5 w-3.5 text-accent transition-transform group-hover:scale-110" strokeWidth={1.5} />
+        </a>
         <a
           href="https://github.com/ArloDel"
           target="_blank"

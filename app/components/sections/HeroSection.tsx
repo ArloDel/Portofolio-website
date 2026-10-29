@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from "react";
 import anime from "animejs";
-import { ArrowDown, ArrowUpRight, MapPin } from "lucide-react";
+import { ArrowDown, ArrowUpRight, FileText, MapPin } from "lucide-react";
 import { useParallax, attachMouseParallax, isReducedMotion } from "@/app/lib/motion";
 
 interface HeroSectionProps {
@@ -172,6 +172,16 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             View projects
             <ArrowDown className="h-4 w-4 transition-transform duration-300 group-hover:translate-y-0.5" strokeWidth={1.75} />
           </button>
+          <a
+            href="/resume.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="glass-chip group flex items-center gap-2 rounded-full px-5 py-3 text-sm font-medium text-ink-muted transition-all duration-300 hover:border-accent/40 hover:text-ink"
+            title="View or download CV / Resume"
+          >
+            <FileText className="h-4 w-4 text-accent transition-transform duration-300 group-hover:scale-110" strokeWidth={1.75} />
+            Resume
+          </a>
           <button
             type="button"
             onClick={() => navigate("contact")}
