@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, FormEvent } from "react";
-import { ArrowUpRight, CheckCircle2, ChevronDown, Loader2, Send } from "lucide-react";
+import { ArrowUpRight, CheckCircle2, ChevronDown, Loader2, MessageSquare, Send } from "lucide-react";
 import { PROFILE_DATA } from "@/app/data/profile";
 import { ContactFormData } from "@/app/types";
 import { useReveal } from "@/app/lib/motion";
@@ -35,6 +35,8 @@ export default function ContactSection({
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [formStatus, setFormStatus] = useState<FormStatus>("IDLE");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const sanitizeInput = (text: string): string => {
     return text
@@ -79,7 +81,7 @@ export default function ContactSection({
     return Object.keys(errors).length === 0;
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isSubmitting || formStatus === "SEALING") return;
 
@@ -93,6 +95,7 @@ export default function ContactSection({
 
     setIsSubmitting(true);
     setFormStatus("SEALING");
+    setSubmitError(null);
 
     const sanitizedData: ContactFormData = {
       name: sanitizeInput(formData.name),
@@ -103,10 +106,35 @@ export default function ContactSection({
 
     setFormData(sanitizedData);
 
-    setTimeout(() => {
+    // Ponytail ladder: native fetch directly to Formspree endpoint or NEXT_PUBLIC_FORMSPREE_ID
+    const formspreeId = process.env.NEXT_PUBLIC_FORMSPREE_ID;
+    if (!formspreeId) {
+      // Fallback: graceful mailto dispatch if no form endpoint is configured yet
+      const subjectEncoded = encodeURIComponent(`[Portfolio] ${sanitizedData.subject} - ${sanitizedData.name}`);
+      const bodyEncoded = encodeURIComponent(
+        `Name: ${sanitizedData.name}\nEmail: ${sanitizedData.email}\nObjective: ${sanitizedData.subject}\n\nMessage:\n${sanitizedData.message}`
+      );
+      window.location.href = `mailto:alifnurrahmanhakim@gmail.com?subject=${subjectEncoded}&body=${bodyEncoded}`;
       setFormStatus("CONFIRMED");
       setIsSubmitting(false);
-    }, 1200);
+      return;
+    }
+
+    try {
+      const res = await fetch(`https://formspree.io/f/${formspreeId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(sanitizedData),
+      });
+
+      if (!res.ok) throw new Error("Failed to send message");
+      setFormStatus("CONFIRMED");
+    } catch {
+      setSubmitError("Failed to dispatch via network. Please contact directly via email or WhatsApp below.");
+      setFormStatus("IDLE");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleResetForm = () => {
@@ -118,6 +146,7 @@ export default function ContactSection({
     });
     setHoneypot("");
     setFormErrors({});
+    setSubmitError(null);
     setFormStatus("IDLE");
     setIsSubmitting(false);
   };
@@ -185,6 +214,25 @@ export default function ContactSection({
                       <div className="text-ink-muted">{value}</div>
                     </div>
                   ))}
+                  {/* Direct instant channels */}
+                  <div className="mt-4 flex flex-wrap gap-2 pt-2">
+                    <a
+                      href="https://wa.me/6281234567890?text=Halo%20Alif,%20saya%20tertarik%20untuk%20berdiskusi%20proyek"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="glass-chip flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-mono text-[11px] text-ink-muted transition-colors hover:text-success hover:border-success/40"
+                    >
+                      <MessageSquare className="h-3.5 w-3.5 text-success" strokeWidth={1.5} />
+                      WhatsApp Direct
+                    </a>
+                    <a
+                      href="mailto:alifnurrahmanhakim@gmail.com"
+                      className="glass-chip flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-mono text-[11px] text-ink-muted transition-colors hover:text-accent hover:border-accent/40"
+                    >
+                      <ArrowUpRight className="h-3.5 w-3.5 text-accent" strokeWidth={1.5} />
+                      alifnurrahmanhakim@gmail.com
+                    </a>
+                  </div>
                 </div>
               </GlassCard>
             </div>
@@ -233,6 +281,12 @@ export default function ContactSection({
                       onChange={(e) => setHoneypot(e.target.value)}
                     />
                   </div>
+
+                  {submitError && (
+                    <div className="mb-4 rounded-xl border border-red-500/20 bg-red-500/10 p-3 text-xs text-red-400">
+                      {submitError}
+                    </div>
+                  )}
 
                   <div className="mb-7">
                     <h3 className="font-display text-xl font-semibold tracking-tight text-ink-hi">
