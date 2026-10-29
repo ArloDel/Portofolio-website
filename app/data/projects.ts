@@ -15,7 +15,8 @@ export const PROJECTS_DATA: ProjectData[] = [
     link: "https://atelier-senja.vercel.app",
     liveUrl: "https://atelier-senja.vercel.app",
     githubUrl: "https://github.com/ArloDel/Atelier-Senja",
-    completedYear: "2024"
+    completedYear: "2024",
+    image: "/projects/atelier-senja.svg"
   },
   {
     id: "olympiade-app",
@@ -29,7 +30,8 @@ export const PROJECTS_DATA: ProjectData[] = [
     link: "https://olympiade-app-kappa.vercel.app",
     liveUrl: "https://olympiade-app-kappa.vercel.app",
     githubUrl: "https://github.com/ArloDel/olympiade-app",
-    completedYear: "2024"
+    completedYear: "2024",
+    image: "/projects/olympiade-app.svg"
   },
   {
     id: "arlo-clipper",
@@ -258,6 +260,7 @@ export async function fetchLiveGithubProjects(
         completedYear:
           curated?.completedYear ||
           (repo.pushed_at ? new Date(repo.pushed_at).getFullYear().toString() : undefined),
+        image: curated?.image,
       });
     }
 

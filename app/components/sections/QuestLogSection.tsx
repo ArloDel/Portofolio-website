@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import anime from "animejs";
+import Image from "next/image";
 import { ArrowUpRight, Github, Check, RefreshCw } from "lucide-react";
 import {
   LIVE_PROJECTS_DATA,
@@ -192,6 +193,20 @@ export default function QuestLogSection({
                 data-project-card
                 className="group flex flex-col p-6"
               >
+                {/* Visual Thumbnail (if available) */}
+                {project.image && (
+                  <div className="relative mb-5 h-44 w-full overflow-hidden rounded-xl border border-fill/[0.08] bg-fill/[0.02]">
+                    <Image
+                      src={project.image}
+                      alt={`${project.name} preview`}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-canvas/60 via-transparent to-transparent pointer-events-none" />
+                  </div>
+                )}
+
                 {/* Top meta row */}
                 <div className="mb-5 flex items-center justify-between">
                   <span className="glass-chip rounded-md px-2 py-0.5 font-mono text-[9px] tracking-widest text-ink-muted">

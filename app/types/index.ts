@@ -63,6 +63,7 @@ export interface ProjectData {
   liveUrl?: string;
   githubUrl: string;
   completedYear?: string;
+  image?: string;
 }
 
 export type ProjectQuest = ProjectData;
