@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import anime from "animejs";
 import { ArrowDown, ArrowUpRight, FileText, MapPin } from "lucide-react";
@@ -32,6 +32,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   onNavigate,
 }) => {
   const heroRef = useRef<HTMLElement | null>(null);
+  const [isDesktop, setIsDesktop] = useState<boolean>(true);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const sync = () => setIsDesktop(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
 
   const navigate = (sectionId: string) => {
     if (onNavigate) {
@@ -89,7 +98,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       ref={heroRef}
       id="hero"
       aria-label="Introduction"
-      className="relative flex min-h-[100svh] w-full select-none flex-col justify-center overflow-hidden"
+      className="relative flex min-h-screen w-full select-none flex-col justify-center overflow-hidden"
     >
       {/* ---- Parallax layer: giant outlined watermark ---- */}
       <div
@@ -123,9 +132,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       </div>
 
       {/* ---- Content (2-column: Left Copy & CTAs • Right 3D Lanyard) ---- */}
-      <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-6xl flex-col justify-center px-6 sm:px-10">
+      <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl flex-col justify-center px-6 sm:px-10">
         {/* Left column: Hero Headline, CTAs & Stats */}
-        <div className="relative z-10 flex w-full flex-col pt-28 pb-4 lg:w-[56%] lg:py-24">
+        <div className="pointer-events-none relative z-20 flex w-full flex-col pt-28 pb-4 lg:w-[56%] lg:py-24">
           {/* Availability badge */}
           <div data-hero-fade className="mb-8 flex items-center gap-3">
             <span className="glass-chip flex items-center gap-2.5 rounded-full px-4 py-1.5">
@@ -176,7 +185,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           </div>
 
           {/* CTAs */}
-          <div data-hero-fade className="mt-10 flex flex-wrap items-center gap-4">
+          <div data-hero-fade className="pointer-events-auto mt-10 flex flex-wrap items-center gap-4">
             <button
               type="button"
               onClick={() => navigate("projects")}
@@ -215,22 +224,22 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           </div>
         </div>
 
-        {/* Right column: Interactive 3D Lanyard Pass (out-of-flow on lg+ to prevent height expansion) */}
-        <div className="relative mb-16 h-[440px] w-full sm:h-[500px] lg:absolute lg:inset-y-0 lg:right-0 lg:mb-0 lg:h-auto lg:w-[44%]">
+        {/* Right column: Interactive 3D Lanyard Pass (full-canvas out-of-flow on lg+ so swinging never clips or expands height) */}
+        <div className="relative z-10 mb-16 h-[440px] w-full sm:h-[500px] lg:absolute lg:inset-0 lg:mb-0 lg:h-auto lg:w-full">
           <Lanyard
-            className="!absolute inset-0"
+            style={{ position: "absolute", inset: 0 }}
             frontImage="/card-front.svg"
             backImage="/card-back.svg"
             strapImage="/band.svg"
             cardColor="#111113"
             finish="holographic"
-            anchor="center"
+            anchor={isDesktop ? "right" : "center"}
             size={0.56}
             strapLength={0.44}
           />
           <div
             data-hero-fade
-            className="pointer-events-none absolute inset-x-0 bottom-4 flex justify-center lg:bottom-14"
+            className="pointer-events-none absolute inset-x-0 bottom-4 flex justify-center lg:bottom-14 lg:left-[50%] lg:right-0"
           >
             <span className="glass-chip rounded-full px-3.5 py-1 font-mono text-[9px] tracking-wider text-ink-muted/80 backdrop-blur-md">
               ✦ DRAG TO SWING • CLICK TO FLIP
