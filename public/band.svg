@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 96" width="512" height="96">
+  <rect width="512" height="96" fill="#18181B" />
+  
+  <!-- Edge stitching lines -->
+  <line x1="0" y1="8" x2="512" y2="8" stroke="#38BDF8" stroke-width="2" stroke-dasharray="8 6" opacity="0.6" />
+  <line x1="0" y1="88" x2="512" y2="88" stroke="#38BDF8" stroke-width="2" stroke-dasharray="8 6" opacity="0.6" />
+
+  <!-- Center text repeated -->
+  <text x="256" y="55" font-family="'Space Grotesk', monospace, sans-serif" font-size="20" font-weight="700" fill="#E4E4E7" letter-spacing="4" text-anchor="middle">
+    ✦ HAKEEEM ✦ FULL-STACK DEV ✦
+  </text>
+</svg>
