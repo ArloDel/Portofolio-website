@@ -6,7 +6,7 @@ export const PROFILE_DATA: ProfileData = {
   title: "Full-Stack Developer",
   institution: "Universitas Pembangunan Nasional 'Veteran' Jawa Timur",
   bio: "Information Systems student at UPN Jatim and freelance web developer. Focused on producing clean user experiences, resilient architecture, and dependable full-stack applications.",
-  avatarUrl: "https://avatars.githubusercontent.com/u/80494993?v=4",
+  avatarUrl: "/profile-cutout.png",
   githubUrl: "https://github.com/ArloDel",
   location: "Surabaya, East Java, Indonesia",
   stats: [

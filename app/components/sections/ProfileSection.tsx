@@ -104,7 +104,7 @@ export const ProfileSection: React.FC<ProfileSectionProps> = ({
             <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
               <div
                 data-reveal
-                className="relative mb-6 h-28 w-28 overflow-hidden rounded-2xl border border-fill/10 bg-surface"
+                className="relative mb-6 h-28 w-28 overflow-hidden rounded-2xl border border-fill/10 bg-gradient-to-b from-fill/[0.08] to-fill/[0.02]"
               >
                 {!imageError ? (
                   <Image
@@ -112,7 +112,7 @@ export const ProfileSection: React.FC<ProfileSectionProps> = ({
                     alt={`${profile.name}'s portrait`}
                     fill
                     sizes="112px"
-                    className="object-cover grayscale transition-all duration-700 hover:grayscale-0"
+                    className="object-contain object-bottom transition-all duration-700 hover:scale-105"
                     onError={() => setImageError(true)}
                   />
                 ) : (
