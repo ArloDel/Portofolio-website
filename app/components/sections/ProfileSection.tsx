@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import anime from "animejs";
 import Image from "next/image";
 import { Github, GraduationCap, MapPin } from "lucide-react";
@@ -9,6 +10,16 @@ import { ProfileData } from "@/app/types";
 import { useReveal, isReducedMotion } from "@/app/lib/motion";
 import SectionHeading from "@/app/components/ui/SectionHeading";
 import GlassCard from "@/app/components/ui/GlassCard";
+import type { LanyardProps } from "@/app/components/ui/Lanyard";
+
+const Lanyard = dynamic<LanyardProps>(() => import("@/app/components/ui/Lanyard"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-full w-full items-center justify-center font-mono text-xs text-ink-faint">
+      INITIALIZING 3D PASS...
+    </div>
+  ),
+});
 
 interface ProfileSectionProps {
   profile?: ProfileData;
@@ -19,7 +30,8 @@ export const ProfileSection: React.FC<ProfileSectionProps> = ({
 }) => {
   const rootRef = useRef<HTMLElement | null>(null);
   const barsRef = useRef<HTMLDivElement | null>(null);
-  const [imageError, setImageError] = React.useState(false);
+  const [imageError, setImageError] = useState(false);
+  const [viewMode, setViewMode] = useState<"badge" | "details">("badge");
 
   useReveal(rootRef, "[data-reveal]", { translateY: 24 });
 
@@ -101,7 +113,102 @@ export const ProfileSection: React.FC<ProfileSectionProps> = ({
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-12">
           {/* Identity card */}
           <GlassCard className="p-7 lg:col-span-5">
-            <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
+            {/* Header controls: Status + View Switcher */}
+            <div data-reveal className="mb-6 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75"></span>
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-accent"></span>
+                </span>
+                <span className="font-mono text-[10px] tracking-caption text-accent uppercase">
+                  {viewMode === "badge" ? "PHYSICAL PASS // VERIFIED" : "DEVELOPER DOSSIER"}
+                </span>
+              </div>
+              <div className="flex rounded-lg border border-fill/10 bg-surface/80 p-0.5">
+                <button
+                  type="button"
+                  onClick={() => setViewMode("badge")}
+                  className={`rounded-md px-2.5 py-1 font-mono text-[10px] uppercase transition-all ${
+                    viewMode === "badge"
+                      ? "bg-accent/20 text-accent font-semibold shadow-xs"
+                      : "text-ink-muted hover:text-ink"
+                  }`}
+                  aria-pressed={viewMode === "badge"}
+                >
+                  3D Pass
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode("details")}
+                  className={`rounded-md px-2.5 py-1 font-mono text-[10px] uppercase transition-all ${
+                    viewMode === "details"
+                      ? "bg-accent/20 text-accent font-semibold shadow-xs"
+                      : "text-ink-muted hover:text-ink"
+                  }`}
+                  aria-pressed={viewMode === "details"}
+                >
+                  Details
+                </button>
+              </div>
+            </div>
+
+            {/* 3D Badge Interactive View */}
+            <div className={viewMode === "badge" ? "flex flex-col w-full" : "hidden"}>
+              <div
+                data-reveal
+                className="relative h-[420px] w-full overflow-hidden rounded-2xl border border-fill/10 bg-surface/30 shadow-inner"
+              >
+                <Lanyard
+                  frontImage="/card-front.svg"
+                  backImage="/card-back.svg"
+                  strapImage="/band.svg"
+                  cardColor="#111113"
+                  finish="holographic"
+                  anchor="center"
+                  size={0.65}
+                  strapLength={0.42}
+                />
+                <div className="pointer-events-none absolute bottom-3 inset-x-0 flex justify-center">
+                  <span className="glass-chip rounded-full px-3 py-1 font-mono text-[9px] tracking-wider text-ink-muted/80 backdrop-blur-md">
+                    ✦ DRAG TO SWING • CLICK TO FLIP
+                  </span>
+                </div>
+              </div>
+
+              <div data-reveal data-reveal-delay="80" className="mt-5 flex items-center justify-between">
+                <div>
+                  <h3 className="font-display text-lg font-semibold tracking-tight text-ink-hi">
+                    {profile.name}
+                  </h3>
+                  <p className="font-mono text-[10px] tracking-caption text-accent">
+                    FULL-STACK DEVELOPER
+                  </p>
+                </div>
+                <span className="font-mono text-[10px] text-ink-faint">
+                  #0804-9499
+                </span>
+              </div>
+
+              <a
+                href={profile.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-reveal
+                data-reveal-delay="140"
+                className="glass-chip group mt-5 flex w-full items-center justify-between rounded-xl px-4 py-3 transition-colors hover:border-accent/40"
+              >
+                <span className="flex items-center gap-2.5 text-sm text-ink-muted transition-colors group-hover:text-ink">
+                  <Github className="h-4 w-4" strokeWidth={1.5} />
+                  @ArloDel
+                </span>
+                <span className="font-mono text-[10px] text-ink-faint transition-colors group-hover:text-accent">
+                  VIEW ↗
+                </span>
+              </a>
+            </div>
+
+            {/* Details Static View */}
+            <div className={viewMode === "details" ? "flex flex-col items-center text-center lg:items-start lg:text-left w-full" : "hidden"}>
               <div
                 data-reveal
                 className="relative mb-6 h-28 w-28 overflow-hidden rounded-2xl border border-fill/10 bg-surface"
