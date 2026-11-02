@@ -16,7 +16,7 @@ export const PROJECTS_DATA: ProjectData[] = [
     liveUrl: "https://atelier-senja.vercel.app",
     githubUrl: "https://github.com/ArloDel/Atelier-Senja",
     completedYear: "2024",
-    image: "/projects/atelier-senja.svg"
+    image: "/projects/atelier-senja.png"
   },
   {
     id: "olympiade-app",
@@ -31,7 +31,7 @@ export const PROJECTS_DATA: ProjectData[] = [
     liveUrl: "https://olympiade-app-kappa.vercel.app",
     githubUrl: "https://github.com/ArloDel/olympiade-app",
     completedYear: "2024",
-    image: "/projects/olympiade-app.svg"
+    image: "/projects/olympiade-app.png"
   },
   {
     id: "arlo-clipper",
