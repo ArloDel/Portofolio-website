@@ -7,7 +7,7 @@ import { JourneyEntry } from "@/app/types";
 import { useReveal, isReducedMotion } from "@/app/lib/motion";
 import SectionHeading from "@/app/components/ui/SectionHeading";
 import GlassCard from "@/app/components/ui/GlassCard";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, FileText } from "lucide-react";
 
 interface JourneyLogSectionProps {
   entries?: JourneyEntry[];
@@ -239,15 +239,27 @@ export default function JourneyLogSection({
             <p className="font-mono text-[10px] tracking-caption text-ink-faint">
               EXPERIENCE LOG — OPEN TO OPPORTUNITIES
             </p>
-            <a
-              href="https://github.com/ArloDel"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-4 inline-flex items-center gap-1.5 text-xs text-ink-muted transition-colors hover:text-accent"
-            >
-              Follow the repository
-              <ArrowUpRight className="h-3.5 w-3.5" strokeWidth={1.75} />
-            </a>
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-4">
+              <a
+                href="/resume.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-4 py-2 font-mono text-xs text-accent transition-all duration-300 hover:border-accent hover:bg-accent/20"
+              >
+                <FileText className="h-3.5 w-3.5" strokeWidth={1.5} />
+                Download CV / Resume (PDF)
+                <ArrowUpRight className="h-3.5 w-3.5" strokeWidth={1.75} />
+              </a>
+              <a
+                href="https://github.com/ArloDel"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs text-ink-muted transition-colors hover:text-accent"
+              >
+                Follow the repository
+                <ArrowUpRight className="h-3.5 w-3.5" strokeWidth={1.75} />
+              </a>
+            </div>
           </div>
         </div>
       </div>
