@@ -38,6 +38,7 @@ export interface ProfileData {
   avatarUrl: string;
   githubUrl: string;
   location?: string;
+  resumeUrl?: string;
   stats: StatGauge[];
   traits?: TraitPerk[];
 }
