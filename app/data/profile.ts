@@ -8,7 +8,8 @@ export const PROFILE_DATA: ProfileData = {
   bio: "Information Systems student at UPN Jatim and freelance web developer. Focused on producing clean user experiences, resilient architecture, and dependable full-stack applications.",
   avatarUrl: "/profile-cutout.png",
   githubUrl: "https://github.com/ArloDel",
-  location: "Surabaya, East Java, Indonesia",
+  location: "Sidoarjo & Surabaya, East Java, Indonesia",
+  resumeUrl: "/resume.pdf",
   stats: [
     {
       id: "stat-frontend",
