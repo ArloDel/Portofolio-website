@@ -13,9 +13,10 @@ export const JOURNEY_DATA: JourneyEntry[] = [
     achievements: [
       "Designed and built web-based business solutions that improve operational efficiency and automate business processes.",
       "Developed a live Warehouse Inventory Management System for stock tracking and logistics management.",
+      "Engineered Olympiade App (olym-app), an academic competition platform delivering online exam sessions, live scoring, and results tracking.",
       "Built an online boarding-house reservation system with digital room booking and rental management.",
     ],
-    technologies: ["PHP", "Laravel", "JavaScript", "MySQL", "HTML", "CSS", "Business Automation"],
+    technologies: ["PHP", "Laravel", "TypeScript", "Next.js", "React", "JavaScript", "MySQL", "Tailwind CSS", "Business Automation"],
     category: "work",
     categoryLabel: "WORK EXPERIENCE",
   },
