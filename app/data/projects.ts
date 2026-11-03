@@ -94,6 +94,21 @@ export const PROJECTS_DATA: ProjectData[] = [
     image: "/projects/stand-in.png"
   },
   {
+    id: "warehouse-project",
+    name: "WarehouseProject",
+    rank: "CLIENT",
+    status: "COMPLETED",
+    subtitle: "Warehouse & logistics management app",
+    description: "An Angular single-page enterprise web application for warehouse management, tracking logistics, components, and inventory workflows.",
+    techStack: ["TypeScript", "Angular", "HTML5", "CSS3", "Vercel"],
+    stack: ["TypeScript", "Angular"],
+    link: "https://warehouse-project.vercel.app",
+    liveUrl: "https://warehouse-project.vercel.app",
+    githubUrl: "https://github.com/ArloDel/WarehouseProject",
+    completedYear: "2024",
+    image: "/projects/warehouse-project.png"
+  },
+  {
     id: "arlo-clipper",
     name: "arlo-clipper",
     rank: "EXPERIMENT",
