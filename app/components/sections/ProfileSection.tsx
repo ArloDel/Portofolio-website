@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import anime from "animejs";
 import Image from "next/image";
-import { Github, GraduationCap, MapPin } from "lucide-react";
+import { FileText, Github, GraduationCap, MapPin } from "lucide-react";
 import { PROFILE_DATA } from "@/app/data/profile";
 import { ProfileData } from "@/app/types";
 import { useReveal, isReducedMotion } from "@/app/lib/motion";
@@ -136,7 +136,7 @@ export const ProfileSection: React.FC<ProfileSectionProps> = ({
                 </div>
                 <div className="flex items-center gap-3 text-ink-muted">
                   <MapPin className="h-4 w-4 shrink-0 text-accent" strokeWidth={1.5} />
-                  <span>Surabaya, East Java, Indonesia — UTC+7</span>
+                  <span>{profile.location} — UTC+7</span>
                 </div>
               </div>
 
@@ -159,22 +159,41 @@ export const ProfileSection: React.FC<ProfileSectionProps> = ({
                 </div>
               </div>
 
-              <a
-                href={profile.githubUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                data-reveal
-                data-reveal-delay="260"
-                className="glass-chip group mt-7 flex w-full items-center justify-between rounded-xl px-4 py-3 transition-colors hover:border-accent/40"
-              >
-                <span className="flex items-center gap-2.5 text-sm text-ink-muted transition-colors group-hover:text-ink">
-                  <Github className="h-4 w-4" strokeWidth={1.5} />
-                  @ArloDel
-                </span>
-                <span className="font-mono text-[10px] text-ink-faint transition-colors group-hover:text-accent">
-                  VIEW ↗
-                </span>
-              </a>
+              <div className="mt-7 flex w-full flex-col gap-2.5">
+                <a
+                  href="/resume.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-reveal
+                  data-reveal-delay="240"
+                  className="glass-chip group flex w-full items-center justify-between rounded-xl px-4 py-3 border border-accent/20 bg-accent/[0.04] transition-all hover:border-accent/60 hover:bg-accent/[0.08]"
+                >
+                  <span className="flex items-center gap-2.5 text-sm font-medium text-ink transition-colors group-hover:text-accent">
+                    <FileText className="h-4 w-4 text-accent" strokeWidth={1.5} />
+                    Download CV / Resume
+                  </span>
+                  <span className="font-mono text-[10px] text-accent">
+                    PDF ↗
+                  </span>
+                </a>
+
+                <a
+                  href={profile.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-reveal
+                  data-reveal-delay="280"
+                  className="glass-chip group flex w-full items-center justify-between rounded-xl px-4 py-3 transition-colors hover:border-accent/40"
+                >
+                  <span className="flex items-center gap-2.5 text-sm text-ink-muted transition-colors group-hover:text-ink">
+                    <Github className="h-4 w-4" strokeWidth={1.5} />
+                    @ArloDel
+                  </span>
+                  <span className="font-mono text-[10px] text-ink-faint transition-colors group-hover:text-accent">
+                    VIEW ↗
+                  </span>
+                </a>
+              </div>
             </div>
           </GlassCard>
 
