@@ -40,20 +40,16 @@ export default function ContactSection({
 
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const sanitizeInput = (text: string): string => {
-    return text
-      .trim()
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#x27;");
-  };
+  const sanitizeInput = (text: string, multiline = false): string =>
+    text
+      .replace(multiline ? /[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g : /[\x00-\x1F\x7F]/g, "")
+      .trim();
 
   const validateForm = (): boolean => {
     const errors: Record<string, string> = {};
-    const trimmedName = formData.name.trim();
-    const trimmedEmail = formData.email.trim();
-    const trimmedMessage = formData.message.trim();
+    const trimmedName = sanitizeInput(formData.name);
+    const trimmedEmail = sanitizeInput(formData.email);
+    const trimmedMessage = sanitizeInput(formData.message, true);
 
     if (!trimmedName) {
       errors.name = "Your name is required.";
@@ -103,7 +99,7 @@ export default function ContactSection({
       name: sanitizeInput(formData.name),
       email: sanitizeInput(formData.email),
       subject: sanitizeInput(formData.subject),
-      message: sanitizeInput(formData.message),
+      message: sanitizeInput(formData.message, true),
     };
 
     setFormData(sanitizedData);
