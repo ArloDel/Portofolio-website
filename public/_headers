@@ -8,3 +8,9 @@
   Cross-Origin-Opener-Policy: same-origin
   X-XSS-Protection: 0
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; connect-src 'self' https://api.github.com https://formspree.io; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://formspree.io;
+
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/projects/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
