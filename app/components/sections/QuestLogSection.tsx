@@ -7,6 +7,7 @@ import { ArrowUpRight, Github, Check, RefreshCw } from "lucide-react";
 import {
   LIVE_PROJECTS_DATA,
   fetchLiveGithubProjects,
+  sanitizeHttpUrl,
 } from "@/app/data/projects";
 import { ProjectData } from "@/app/types";
 import { useReveal, isReducedMotion } from "@/app/lib/motion";
@@ -180,9 +181,9 @@ export default function QuestLogSection({
         >
           {filteredProjects.map((project) => {
             const techStack = project.stack || project.techStack || [];
-            const liveUrl = project.liveUrl || project.link;
+            const liveUrl = sanitizeHttpUrl(project.liveUrl || project.link);
             const githubUrl =
-              project.githubUrl || "https://github.com/ArloDel";
+              sanitizeHttpUrl(project.githubUrl) || "https://github.com/ArloDel";
             const rank = project.rank || "SHIPPED";
 
             return (
