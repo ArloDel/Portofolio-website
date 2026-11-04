@@ -41,24 +41,29 @@ export function useReveal(
       return;
     }
 
+    els.forEach((el) => {
+      el.style.willChange = "transform, opacity";
+    });
     anime.set(els, { opacity: 0, translateY });
 
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return;
-          const delay = Number(
-            (entry.target as HTMLElement).dataset.revealDelay ?? 0
-          );
+          const targetEl = entry.target as HTMLElement;
+          const delay = Number(targetEl.dataset.revealDelay ?? 0);
           anime({
-            targets: entry.target,
+            targets: targetEl,
             translateY: [translateY, 0],
             opacity: [0, 1],
             easing: "easeOutExpo",
             duration,
             delay,
+            complete: () => {
+              targetEl.style.willChange = "auto";
+            },
           });
-          if (once) io.unobserve(entry.target);
+          if (once) io.unobserve(targetEl);
         });
       },
       { threshold: 0.15, rootMargin: "0px 0px -40px 0px" }
@@ -177,24 +182,39 @@ export function attachMouseParallax(
   selector: string,
   strength = 14
 ) {
+  if (typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches) {
+    return () => {};
+  }
+
   const targets = Array.from(el.querySelectorAll<HTMLElement>(selector));
   if (targets.length === 0) return () => {};
 
-  const onMouseMove = (event: MouseEvent) => {
-    const x = (event.clientX / window.innerWidth - 0.5) * strength;
-    const y = (event.clientY / window.innerHeight - 0.5) * strength;
+  targets.forEach((target) => {
+    target.style.transition = "transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)";
+    target.style.willChange = "transform";
+  });
 
-    targets.forEach((target, index) => {
-      anime({
-        targets: target,
-        translateX: x * (1 + index * 0.25),
-        translateY: y * (0.6 + index * 0.35),
-        duration: 600,
-        easing: "easeOutQuad",
+  let raf = 0;
+  let lastX = 0;
+  let lastY = 0;
+
+  const onMouseMove = (event: MouseEvent) => {
+    lastX = (event.clientX / window.innerWidth - 0.5) * strength;
+    lastY = (event.clientY / window.innerHeight - 0.5) * strength;
+    if (raf) return;
+    raf = requestAnimationFrame(() => {
+      raf = 0;
+      targets.forEach((target, index) => {
+        const tx = (lastX * (1 + index * 0.25)).toFixed(2);
+        const ty = (lastY * (0.6 + index * 0.35)).toFixed(2);
+        target.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
       });
     });
   };
 
   el.addEventListener("mousemove", onMouseMove, { passive: true });
-  return () => el.removeEventListener("mousemove", onMouseMove);
+  return () => {
+    cancelAnimationFrame(raf);
+    el.removeEventListener("mousemove", onMouseMove);
+  };
 }
