@@ -172,10 +172,6 @@ html.light {
 /* ==========================================
    3. Anime.js Parallax / Reveal Support
    ========================================== */
-[data-reveal] {
-  will-change: transform, opacity;
-}
-
 [data-parallax] {
   will-change: transform;
 }
