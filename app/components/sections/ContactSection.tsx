@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, FormEvent } from "react";
-import { ArrowUpRight, CheckCircle2, ChevronDown, Loader2, MessageSquare, Send } from "lucide-react";
+import { ArrowUpRight, CheckCircle2, ChevronDown, Loader2, Mail, Send } from "lucide-react";
 import { PROFILE_DATA } from "@/app/data/profile";
 import { ContactFormData } from "@/app/types";
 import { useReveal } from "@/app/lib/motion";
@@ -21,6 +21,8 @@ const SUBJECT_OPTIONS = [
   "Open-source contribution",
   "General inquiry",
 ];
+
+const getContactEmail = () => ["alifnurrahmanhakim", "gmail.com"].join("@");
 
 export default function ContactSection({
   githubUrl = PROFILE_DATA.githubUrl,
@@ -114,7 +116,7 @@ export default function ContactSection({
       const bodyEncoded = encodeURIComponent(
         `Name: ${sanitizedData.name}\nEmail: ${sanitizedData.email}\nObjective: ${sanitizedData.subject}\n\nMessage:\n${sanitizedData.message}`
       );
-      window.location.href = `mailto:alifnurrahmanhakim@gmail.com?subject=${subjectEncoded}&body=${bodyEncoded}`;
+      window.location.href = `mailto:${getContactEmail()}?subject=${subjectEncoded}&body=${bodyEncoded}`;
       setFormStatus("CONFIRMED");
       setIsSubmitting(false);
       return;
@@ -130,7 +132,7 @@ export default function ContactSection({
       if (!res.ok) throw new Error("Failed to send message");
       setFormStatus("CONFIRMED");
     } catch {
-      setSubmitError("Failed to dispatch via network. Please contact directly via email or WhatsApp below.");
+      setSubmitError("Failed to dispatch via network. Please contact directly via email.");
       setFormStatus("IDLE");
     } finally {
       setIsSubmitting(false);
@@ -216,22 +218,16 @@ export default function ContactSection({
                   ))}
                   {/* Direct instant channels */}
                   <div className="mt-4 flex flex-wrap gap-2 pt-2">
-                    <a
-                      href="https://wa.me/6281234567890?text=Halo%20Alif,%20saya%20tertarik%20untuk%20berdiskusi%20proyek"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="glass-chip flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-mono text-[11px] text-ink-muted transition-colors hover:text-success hover:border-success/40"
-                    >
-                      <MessageSquare className="h-3.5 w-3.5 text-success" strokeWidth={1.5} />
-                      WhatsApp Direct
-                    </a>
-                    <a
-                      href="mailto:alifnurrahmanhakim@gmail.com"
+                    <button
+                      type="button"
+                      onClick={() => {
+                        window.location.href = `mailto:${getContactEmail()}`;
+                      }}
                       className="glass-chip flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-mono text-[11px] text-ink-muted transition-colors hover:text-accent hover:border-accent/40"
                     >
-                      <ArrowUpRight className="h-3.5 w-3.5 text-accent" strokeWidth={1.5} />
-                      alifnurrahmanhakim@gmail.com
-                    </a>
+                      <Mail className="h-3.5 w-3.5 text-accent" strokeWidth={1.5} />
+                      Email Direct
+                    </button>
                   </div>
                 </div>
               </GlassCard>
