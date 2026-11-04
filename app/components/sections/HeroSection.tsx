@@ -33,6 +33,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 }) => {
   const heroRef = useRef<HTMLElement | null>(null);
   const [isDesktop, setIsDesktop] = useState<boolean>(true);
+  const [lanyardReady, setLanyardReady] = useState<boolean>(false);
 
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 1024px)");
@@ -40,6 +41,16 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     sync();
     mq.addEventListener("change", sync);
     return () => mq.removeEventListener("change", sync);
+  }, []);
+
+  // Defer heavy Three.js / WebGL boot until browser idle after Hero text paints
+  useEffect(() => {
+    if ("requestIdleCallback" in window) {
+      const id = window.requestIdleCallback(() => setLanyardReady(true), { timeout: 600 });
+      return () => window.cancelIdleCallback(id);
+    }
+    const timer = globalThis.setTimeout(() => setLanyardReady(true), 150);
+    return () => globalThis.clearTimeout(timer);
   }, []);
 
   const navigate = (sectionId: string) => {
@@ -226,17 +237,23 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
         {/* Right column: Interactive 3D Lanyard Pass (full-canvas out-of-flow on lg+ so swinging never clips or expands height) */}
         <div className="relative z-10 mb-16 h-[440px] w-full sm:h-[500px] lg:absolute lg:inset-0 lg:mb-0 lg:h-auto lg:w-full">
-          <Lanyard
-            style={{ position: "absolute", inset: 0 }}
-            frontImage="/card-front.svg"
-            backImage="/card-back.svg"
-            strapImage="/band.svg"
-            cardColor="#111113"
-            finish="holographic"
-            anchor={isDesktop ? "right" : "center"}
-            size={0.56}
-            strapLength={0.44}
-          />
+          {lanyardReady ? (
+            <Lanyard
+              style={{ position: "absolute", inset: 0 }}
+              frontImage="/card-front.svg"
+              backImage="/card-back.svg"
+              strapImage="/band.svg"
+              cardColor="#111113"
+              finish="holographic"
+              anchor={isDesktop ? "right" : "center"}
+              size={0.56}
+              strapLength={0.44}
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center font-mono text-[10px] tracking-caption text-ink-faint">
+              INITIALIZING 3D PASS...
+            </div>
+          )}
           <div
             data-hero-fade
             className="pointer-events-none absolute inset-x-0 bottom-4 flex justify-center lg:bottom-14 lg:left-[50%] lg:right-0"
