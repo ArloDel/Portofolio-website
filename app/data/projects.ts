@@ -16,7 +16,7 @@ export const PROJECTS_DATA: ProjectData[] = [
     liveUrl: "https://atelier-senja.vercel.app",
     githubUrl: "https://github.com/ArloDel/Atelier-Senja",
     completedYear: "2024",
-    image: "/projects/atelier-senja.png"
+    image: "/projects/atelier-senja.webp"
   },
   {
     id: "olympiade-app",
@@ -31,7 +31,7 @@ export const PROJECTS_DATA: ProjectData[] = [
     liveUrl: "https://olympiade-app-kappa.vercel.app",
     githubUrl: "https://github.com/ArloDel/olympiade-app",
     completedYear: "2024",
-    image: "/projects/olympiade-app.png"
+    image: "/projects/olympiade-app.webp"
   },
   {
     id: "comic-planner",
@@ -46,7 +46,7 @@ export const PROJECTS_DATA: ProjectData[] = [
     liveUrl: "https://comic-planner-k5pp.vercel.app/",
     githubUrl: "https://github.com/ArloDel/comic-planner",
     completedYear: "2024",
-    image: "/projects/comic-planner.png"
+    image: "/projects/comic-planner.webp"
   },
   {
     id: "kymikokostum",
@@ -61,7 +61,7 @@ export const PROJECTS_DATA: ProjectData[] = [
     liveUrl: "https://arlodel.github.io/kymikokostum-v1.github.io/",
     githubUrl: "https://github.com/ArloDel/kymikokostum-v1.github.io",
     completedYear: "2024",
-    image: "/projects/kymikokostum.png"
+    image: "/projects/kymikokostum.webp"
   },
   {
     id: "artistik-website",
@@ -76,7 +76,7 @@ export const PROJECTS_DATA: ProjectData[] = [
     liveUrl: "https://artistik-website-project.vercel.app",
     githubUrl: "https://github.com/ArloDel/artistikWebsite-Project",
     completedYear: "2024",
-    image: "/projects/artistik-website.png"
+    image: "/projects/artistik-website.webp"
   },
   {
     id: "stand-in",
@@ -91,7 +91,7 @@ export const PROJECTS_DATA: ProjectData[] = [
     liveUrl: "https://stand-in.vercel.app",
     githubUrl: "https://github.com/ArloDel/Stand.in",
     completedYear: "2024",
-    image: "/projects/stand-in.png"
+    image: "/projects/stand-in.webp"
   },
   {
     id: "warehouse-project",
@@ -106,7 +106,7 @@ export const PROJECTS_DATA: ProjectData[] = [
     liveUrl: "https://warehouse.zaky-server.my.id/",
     githubUrl: "https://github.com/ArloDel/warehouse-project",
     completedYear: "2024",
-    image: "/projects/warehouse-project.png"
+    image: "/projects/warehouse-project.webp"
   },
   {
     id: "arlo-clipper",
@@ -292,7 +292,7 @@ function buildStackFromRepo(repo: GithubRepoResponse, fallback?: string[]): stri
   return Array.from(items).slice(0, 5);
 }
 
-const CACHE_KEY = "arlodel_live_repos_cache_v1";
+const CACHE_KEY = "arlodel_live_repos_cache_v2";
 const CACHE_TTL_MS = 30 * 60 * 1000; // 30 minutes cache
 
 /**
