@@ -10,7 +10,6 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^7.3.1",
     "@types/three": "^0.187.0",
     "animejs": "^3.2.2",
     "gsap": "^3.12.5",
