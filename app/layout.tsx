@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import ThemeProvider from "@/app/components/ui/ThemeProvider";
-import "@fortawesome/fontawesome-free/css/all.min.css";
 import "./globals.css";
 
 const inter = Inter({
