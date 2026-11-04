@@ -191,31 +191,89 @@ const TOPIC_LABELS: Record<string, string> = {
   nodejs: "Node.js",
 };
 
-function normalizeLiveUrl(raw?: string | null): string | undefined {
-  if (!raw) return undefined;
+export function sanitizeHttpUrl(raw?: string | null): string | undefined {
+  if (typeof raw !== "string") return undefined;
   const trimmed = raw.trim();
   if (!trimmed) return undefined;
-  const withProtocol = /^https?:\/\//i.test(trimmed)
-    ? trimmed
-    : `https://${trimmed}`;
-
   try {
-    const parsed = new URL(withProtocol);
-    // Strict protocol check (only http and https allowed, prevent javascript:, data:, etc.)
+    const parsed = new URL(trimmed);
     if (parsed.protocol !== "https:" && parsed.protocol !== "http:") {
       return undefined;
-    }
-    // Prevent github repo self-links from being treated as live sites
-    if (parsed.hostname.toLowerCase() === "github.com" || parsed.hostname.toLowerCase().endsWith(".github.com")) {
-      // Allow username.github.io pages, but ignore github.com repo links
-      if (parsed.hostname.toLowerCase() === "github.com") {
-        return undefined;
-      }
     }
     return parsed.href;
   } catch {
     return undefined;
   }
+}
+
+function normalizeLiveUrl(raw?: string | null): string | undefined {
+  if (typeof raw !== "string") return undefined;
+  const trimmed = raw.trim();
+  if (!trimmed) return undefined;
+  // Reject non-http(s) URI schemes (javascript:, data:, vbscript:, etc.) before adding default https://
+  if (/^[a-z][a-z0-9+.-]*:/i.test(trimmed) && !/^https?:\/\//i.test(trimmed)) {
+    return undefined;
+  }
+  const withProtocol = /^https?:\/\//i.test(trimmed)
+    ? trimmed
+    : `https://${trimmed}`;
+
+  const safeHref = sanitizeHttpUrl(withProtocol);
+  if (!safeHref) return undefined;
+
+  try {
+    const host = new URL(safeHref).hostname.toLowerCase();
+    // Ignore github.com repo/subdomain links (username.github.io pages remain allowed)
+    if (host === "github.com" || host.endsWith(".github.com")) {
+      return undefined;
+    }
+    return safeHref;
+  } catch {
+    return undefined;
+  }
+}
+
+function sanitizeGithubRepoUrl(raw?: string | null): string | undefined {
+  const safeHref = sanitizeHttpUrl(raw);
+  if (!safeHref) return undefined;
+  try {
+    return new URL(safeHref).hostname.toLowerCase() === "github.com" ? safeHref : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+function sanitizeCachedProjects(raw: unknown): ProjectData[] {
+  if (!Array.isArray(raw)) return [];
+  const valid: ProjectData[] = [];
+  for (const item of raw) {
+    if (!item || typeof item !== "object") continue;
+    const p = item as Partial<ProjectData>;
+    if (typeof p.id !== "string" || typeof p.name !== "string") continue;
+    const liveUrl = normalizeLiveUrl(p.liveUrl || p.link);
+    if (!liveUrl) continue;
+    const githubUrl = sanitizeGithubRepoUrl(p.githubUrl) || `https://github.com/${GITHUB_USERNAME}`;
+    const safeImage =
+      typeof p.image === "string" && p.image.startsWith("/") && !p.image.startsWith("//")
+        ? p.image
+        : undefined;
+    valid.push({
+      id: p.id,
+      name: p.name,
+      rank: typeof p.rank === "string" ? p.rank : "SHIPPED",
+      status: p.status === "IN PROGRESS" ? "IN PROGRESS" : "COMPLETED",
+      subtitle: typeof p.subtitle === "string" ? p.subtitle : undefined,
+      description: typeof p.description === "string" ? p.description : "",
+      techStack: Array.isArray(p.techStack) ? p.techStack.filter((s): s is string => typeof s === "string") : [],
+      stack: Array.isArray(p.stack) ? p.stack.filter((s): s is string => typeof s === "string") : [],
+      link: liveUrl,
+      liveUrl,
+      githubUrl,
+      completedYear: typeof p.completedYear === "string" ? p.completedYear : undefined,
+      image: safeImage,
+    });
+  }
+  return valid;
 }
 
 function buildStackFromRepo(repo: GithubRepoResponse, fallback?: string[]): string[] {
@@ -249,9 +307,14 @@ export async function fetchLiveGithubProjects(
     try {
       const cached = localStorage.getItem(CACHE_KEY);
       if (cached) {
-        const { timestamp, data } = JSON.parse(cached);
-        if (Date.now() - timestamp < CACHE_TTL_MS && Array.isArray(data) && data.length > 0) {
-          return data;
+        const parsed = JSON.parse(cached);
+        if (
+          parsed &&
+          typeof parsed.timestamp === "number" &&
+          Date.now() - parsed.timestamp < CACHE_TTL_MS
+        ) {
+          const safeData = sanitizeCachedProjects(parsed.data);
+          if (safeData.length > 0) return safeData;
         }
       }
     } catch {
@@ -331,7 +394,10 @@ export async function fetchLiveGithubProjects(
         stack,
         link: liveUrl,
         liveUrl,
-        githubUrl: repo.html_url || curated?.githubUrl || `https://github.com/${username}/${repo.name}`,
+        githubUrl:
+          sanitizeGithubRepoUrl(repo.html_url) ||
+          sanitizeGithubRepoUrl(curated?.githubUrl) ||
+          `https://github.com/${encodeURIComponent(username)}/${encodeURIComponent(repo.name)}`,
         completedYear:
           curated?.completedYear ||
           (repo.pushed_at ? new Date(repo.pushed_at).getFullYear().toString() : undefined),
