@@ -122,7 +122,7 @@ export default function ContactSection({
       const res = await fetch(`https://formspree.io/f/${formspreeId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify(sanitizedData),
+        body: JSON.stringify({ ...sanitizedData, _gotcha: honeypot }),
       });
 
       if (!res.ok) throw new Error("Failed to send message");
@@ -260,13 +260,13 @@ export default function ContactSection({
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} noValidate className="relative">
-                  {/* Anti-spam honeypot hidden field */}
-                  <div className="hidden" aria-hidden="true">
-                    <label htmlFor="company_website_hp">Do not fill this field</label>
+                  {/* Anti-spam honeypot hidden field (Formspree native _gotcha) */}
+                  <div className="sr-only pointer-events-none" aria-hidden="true">
+                    <label htmlFor="_gotcha">Do not fill this field</label>
                     <input
                       type="text"
-                      id="company_website_hp"
-                      name="company_website_hp"
+                      id="_gotcha"
+                      name="_gotcha"
                       tabIndex={-1}
                       autoComplete="off"
                       value={honeypot}
