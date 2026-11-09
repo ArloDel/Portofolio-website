@@ -292,7 +292,7 @@ function buildStackFromRepo(repo: GithubRepoResponse, fallback?: string[]): stri
   return Array.from(items).slice(0, 5);
 }
 
-const CACHE_KEY = "arlodel_live_repos_cache_v2";
+const CACHE_KEY = "arlodel_live_repos_cache_v3";
 const CACHE_TTL_MS = 30 * 60 * 1000; // 30 minutes cache
 
 /**
@@ -345,6 +345,10 @@ export async function fetchLiveGithubProjects(
     PROJECTS_DATA.forEach((p) => {
       curatedByKey.set(p.id.toLowerCase(), p);
       curatedByKey.set(p.name.toLowerCase(), p);
+      // Also match by the repo slug in githubUrl, so a repo whose name differs
+      // from the curated display name merges instead of appearing twice.
+      const repoSlug = p.githubUrl?.split("/").filter(Boolean).pop();
+      if (repoSlug) curatedByKey.set(repoSlug.toLowerCase(), p);
     });
 
     const syncedMap = new Map<string, ProjectData>();
@@ -378,7 +382,7 @@ export async function fetchLiveGithubProjects(
           ? "CLIENT"
           : "LIVEDEPLOYMENT");
 
-      syncedMap.set(key, {
+      syncedMap.set(curated ? curated.name.toLowerCase() : key, {
         id: curated?.id || key,
         name: curated?.name || repo.name,
         rank: rank === "LIVEDEPLOYMENT" ? "SHIPPED" : rank,
