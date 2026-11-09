@@ -75,6 +75,11 @@ export default function QuestLogSection({
     return (project.rank || "SHIPPED").toUpperCase() === activeFilter;
   });
 
+  // Curated projects (with a preview image) get full cards; auto-synced repos
+  // without visuals collapse into a compact list so the grid stays even.
+  const featuredProjects = filteredProjects.filter((p) => Boolean(p.image));
+  const otherProjects = filteredProjects.filter((p) => !p.image);
+
   // Dynamically include "Shipped / Other" tab if new GitHub repos with non-Flagship/Client rank arrive
   const extraShippedCount = liveProjects.filter(
     (p) => !["FLAGSHIP", "CLIENT"].includes((p.rank || "").toUpperCase())
@@ -179,7 +184,7 @@ export default function QuestLogSection({
           ref={gridRef}
           className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
         >
-          {filteredProjects.map((project) => {
+          {featuredProjects.map((project) => {
             const techStack = project.stack || project.techStack || [];
             const liveUrl = sanitizeHttpUrl(project.liveUrl || project.link);
             const githubUrl =
@@ -289,6 +294,63 @@ export default function QuestLogSection({
             );
           })}
         </div>
+
+        {/* Compact list for deployments without curated visuals */}
+        {otherProjects.length > 0 && (
+          <div data-reveal className="mt-10">
+            <p className="mb-3 font-mono text-[10px] tracking-caption text-ink-faint">
+              OTHER DEPLOYMENTS
+            </p>
+            <ul className="glass-soft divide-y divide-fill/[0.06] overflow-hidden rounded-2xl">
+              {otherProjects.map((project) => {
+                const liveUrl = sanitizeHttpUrl(project.liveUrl || project.link);
+                const githubUrl = sanitizeHttpUrl(project.githubUrl);
+                const techStack = project.stack || project.techStack || [];
+                return (
+                  <li
+                    key={project.id}
+                    className="flex flex-col gap-2 px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate font-display text-sm font-semibold text-ink">
+                        {project.name}
+                      </p>
+                      {techStack.length > 0 && (
+                        <p className="mt-0.5 font-mono text-[10px] text-ink-faint">
+                          {techStack.join(" · ")}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex shrink-0 items-center gap-5">
+                      {liveUrl && (
+                        <a
+                          href={liveUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1.5 text-xs font-medium text-accent transition-transform duration-200 hover:gap-2.5"
+                        >
+                          Live site
+                          <ArrowUpRight className="h-3.5 w-3.5" strokeWidth={1.75} />
+                        </a>
+                      )}
+                      {githubUrl && (
+                        <a
+                          href={githubUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1.5 font-mono text-[10px] tracking-wider text-ink-faint transition-colors hover:text-ink"
+                        >
+                          <Github className="h-3.5 w-3.5" strokeWidth={1.5} />
+                          REPO
+                        </a>
+                      )}
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
 
         {/* Quiet footer note */}
         <div data-reveal className="mt-10 text-center">
