@@ -90,7 +90,7 @@ export const ProfileSection: React.FC<ProfileSectionProps> = ({
       aria-label="About"
       className="relative w-full px-6 py-28 sm:px-10 sm:py-36"
     >
-      <div className="mx-auto w-full max-w-5xl">
+      <div className="mx-auto w-full max-w-6xl">
         <SectionHeading
           index="01"
           kicker="ABOUT"
