@@ -44,16 +44,19 @@ export default function Home() {
 
     const observer = new IntersectionObserver(
       (entries) => {
+        // A section is "active" while it crosses a thin band at ~45% of the
+        // viewport. Ratio-based thresholds never fire for sections taller than
+        // the viewport (Projects / Experience), so we test the band instead.
         entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.25) {
+          if (entry.isIntersecting) {
             setActiveSection(entry.target.id);
           }
         });
       },
       {
         root: null,
-        rootMargin: "-15% 0px -35% 0px",
-        threshold: [0.25, 0.5, 0.75],
+        rootMargin: "-45% 0px -54% 0px",
+        threshold: 0,
       }
     );
 
