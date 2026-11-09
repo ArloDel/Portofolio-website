@@ -14,10 +14,10 @@ interface JourneyLogSectionProps {
 }
 
 const FILTER_TABS = [
-  { id: "all", label: "ALL" },
-  { id: "work", label: "WORK & INTERNSHIPS" },
-  { id: "education", label: "EDUCATION & BOOTCAMP" },
-  { id: "organization", label: "ORGANIZATION" },
+  { id: "all", label: "All" },
+  { id: "work", label: "Work & internships" },
+  { id: "education", label: "Education & bootcamp" },
+  { id: "organization", label: "Organization" },
 ] as const;
 
 type FilterTabId = (typeof FILTER_TABS)[number]["id"];
@@ -198,7 +198,7 @@ export default function JourneyLogSection({
           data-reveal
           role="group"
           aria-label="Filter experience by category"
-          className="mb-12 flex flex-wrap items-center justify-center gap-2"
+          className="mb-10 flex flex-wrap items-center gap-2.5"
         >
           {FILTER_TABS.map((tab) => {
             const isActive = filter === tab.id;
@@ -208,10 +208,10 @@ export default function JourneyLogSection({
                 type="button"
                 aria-pressed={isActive}
                 onClick={() => setFilter(tab.id)}
-                className={`rounded-full px-4 py-1.5 font-mono text-[11px] tracking-wider transition-all duration-300 ${
+                className={`rounded-full px-4 py-2 text-xs font-medium transition-all duration-300 ${
                   isActive
-                    ? "border border-accent/60 bg-accent/20 text-accent shadow-sm"
-                    : "border border-fill/[0.08] bg-canvas/40 text-ink-muted hover:border-fill/[0.2] hover:text-ink"
+                    ? "bg-invert text-invert-ink shadow-glowSoft"
+                    : "glass-chip text-ink-faint hover:border-fill/20 hover:text-ink"
                 }`}
               >
                 {tab.label}
