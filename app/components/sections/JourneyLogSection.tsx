@@ -7,7 +7,7 @@ import { JourneyEntry } from "@/app/types";
 import { useReveal, isReducedMotion } from "@/app/lib/motion";
 import SectionHeading from "@/app/components/ui/SectionHeading";
 import GlassCard from "@/app/components/ui/GlassCard";
-import { ArrowUpRight, FileText } from "lucide-react";
+import { ArrowUpRight, ChevronDown, FileText } from "lucide-react";
 
 interface JourneyLogSectionProps {
   entries?: JourneyEntry[];
@@ -22,112 +22,135 @@ const FILTER_TABS = [
 
 type FilterTabId = (typeof FILTER_TABS)[number]["id"];
 
+const VISIBLE_ACHIEVEMENTS = 2;
+
+function TimelineCard({ item }: { item: JourneyEntry }) {
+  const [expanded, setExpanded] = useState(false);
+  const achievements = item.achievements ?? [];
+  const hiddenCount = Math.max(0, achievements.length - VISIBLE_ACHIEVEMENTS);
+  const shown = expanded ? achievements : achievements.slice(0, VISIBLE_ACHIEVEMENTS);
+
+  return (
+    <GlassCard hover className="group p-6 sm:p-7">
+      <div className="mb-3 flex flex-wrap items-center gap-2 md:hidden">
+        <span className="glass-chip rounded-md px-2 py-0.5 font-mono text-[10px] tracking-widest text-accent">
+          {item.period}
+        </span>
+        {item.categoryLabel && (
+          <span className="glass-chip rounded-md px-2 py-0.5 font-mono text-[10px] tracking-widest text-ink-muted">
+            {item.categoryLabel}
+          </span>
+        )}
+      </div>
+
+      <h3 className="font-display text-xl font-semibold tracking-tight text-ink-hi transition-colors group-hover:text-accent">
+        {item.title}
+      </h3>
+
+      <div className="mt-2 flex flex-wrap items-center gap-1.5 text-sm text-ink-muted">
+        <span className="font-medium text-ink">{item.role}</span>
+        <span className="text-ink-faint">—</span>
+        <span className="text-accent">{item.organization}</span>
+        {item.location && (
+          <>
+            <span className="text-ink-faint">—</span>
+            <span className="font-mono text-xs text-ink-faint">{item.location}</span>
+          </>
+        )}
+      </div>
+
+      <p className="mt-4 text-sm leading-relaxed text-ink-muted">{item.summary}</p>
+
+      {shown.length > 0 && (
+        <ul className="mt-4 space-y-2">
+          {shown.map((achievement, idx) => (
+            <li
+              key={idx}
+              className="flex items-start gap-2.5 text-sm leading-relaxed text-ink-muted"
+            >
+              <span
+                className="mt-[9px] h-1 w-1 shrink-0 rounded-full bg-accent"
+                aria-hidden="true"
+              />
+              <span>{achievement}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {hiddenCount > 0 && (
+        <button
+          type="button"
+          aria-expanded={expanded}
+          onClick={() => setExpanded((v) => !v)}
+          className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-accent transition-colors hover:text-accent-strong"
+        >
+          {expanded ? "Show less" : `Show ${hiddenCount} more`}
+          <ChevronDown
+            className={`h-3.5 w-3.5 transition-transform duration-300 ${expanded ? "rotate-180" : ""}`}
+            strokeWidth={1.75}
+          />
+        </button>
+      )}
+
+      {item.technologies && item.technologies.length > 0 && (
+        <div className="mt-5 flex flex-wrap gap-1.5 border-t border-fill/[0.07] pt-4">
+          {item.technologies.map((tech, tIdx) => (
+            <span
+              key={tIdx}
+              className="glass-chip rounded-md px-2 py-0.5 font-mono text-[10px] text-ink-faint"
+            >
+              {tech}
+            </span>
+          ))}
+        </div>
+      )}
+    </GlassCard>
+  );
+}
+
 function TimelineList({ entries }: { entries: JourneyEntry[] }) {
   const listRef = useRef<HTMLDivElement | null>(null);
 
   useReveal(listRef, "[data-reveal]", { translateY: 26 });
 
   return (
-    <div ref={listRef} className="flex flex-col gap-10 sm:gap-14">
-      {entries.map((item, index) => {
-        const isEven = index % 2 === 0;
-        return (
+    <div ref={listRef} className="flex flex-col gap-6">
+      {entries.map((item, index) => (
+        <div
+          key={item.id}
+          data-reveal
+          data-reveal-delay={index * 80}
+          data-timeline-card
+          className="relative grid grid-cols-1 pl-10 md:grid-cols-[11rem_1fr] md:gap-10 md:pl-0"
+        >
+          {/* Node on the spine */}
           <div
-            key={item.id}
-            data-reveal
-            data-reveal-delay={index * 100}
-            data-timeline-card
-            className={`relative flex flex-col pl-10 md:flex-row md:pl-0 ${
-              isEven ? "md:flex-row" : "md:flex-row-reverse"
-            }`}
+            aria-hidden="true"
+            className="absolute left-0 top-7 md:left-[13.5rem] md:-translate-x-1/2"
           >
-            {/* Node */}
-            <div
-              aria-hidden="true"
-              className="absolute left-0 top-2 md:left-1/2 md:-translate-x-1/2"
-            >
-              <span className="block h-[15px] w-[15px] rounded-full border border-accent/40 bg-canvas">
-                <span className="m-[3px] block h-[7px] w-[7px] rounded-full bg-accent/80" />
-              </span>
-            </div>
-
-            {/* Card */}
-            <div
-              className={`w-full md:w-[calc(50%-2.5rem)] ${
-                isEven ? "md:mr-auto" : "md:ml-auto"
-              }`}
-            >
-              <GlassCard hover className="group p-6 sm:p-7">
-                <div className="mb-4 flex flex-wrap items-center gap-2">
-                  <span className="glass-chip rounded-md px-2 py-0.5 font-mono text-[9px] tracking-widest text-accent">
-                    {item.period}
-                  </span>
-                  {item.categoryLabel && (
-                    <span className="glass-chip rounded-md px-2 py-0.5 font-mono text-[9px] tracking-widest text-ink-muted">
-                      {item.categoryLabel}
-                    </span>
-                  )}
-                </div>
-
-                <h3 className="font-display text-xl font-semibold tracking-tight text-ink-hi transition-colors group-hover:text-accent">
-                  {item.title}
-                </h3>
-
-                <div className="mt-2 flex flex-wrap items-center gap-1.5 text-sm text-ink-muted">
-                  <span className="font-medium text-ink">{item.role}</span>
-                  <span className="text-ink-faint">—</span>
-                  <span className="text-accent">{item.organization}</span>
-                  {item.location && (
-                    <>
-                      <span className="text-ink-faint">—</span>
-                      <span className="text-xs font-mono text-ink-faint">
-                        {item.location}
-                      </span>
-                    </>
-                  )}
-                </div>
-
-                <p className="mt-4 text-sm leading-relaxed text-ink-muted">
-                  {item.summary}
-                </p>
-
-                {item.achievements && item.achievements.length > 0 && (
-                  <ul className="mt-5 space-y-2">
-                    {item.achievements.map((achievement, idx) => (
-                      <li
-                        key={idx}
-                        className="flex items-start gap-2.5 text-xs leading-relaxed text-ink-muted sm:text-sm"
-                      >
-                        <span
-                          className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-accent"
-                          aria-hidden="true"
-                        />
-                        <span>{achievement}</span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-
-                {item.technologies && item.technologies.length > 0 && (
-                  <div className="mt-5 flex flex-wrap gap-1.5 border-t border-fill/[0.07] pt-4">
-                    {item.technologies.map((tech, tIdx) => (
-                      <span
-                        key={tIdx}
-                        className="glass-chip rounded-md px-2 py-0.5 font-mono text-[10px] text-ink-faint"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </GlassCard>
-            </div>
-
-            {/* Empty twin column keeps alternating layout honest */}
-            <div className="hidden md:block md:w-[calc(50%-2.5rem)]" />
+            <span className="block h-[15px] w-[15px] rounded-full border border-accent/40 bg-canvas">
+              <span className="m-[3px] block h-[7px] w-[7px] rounded-full bg-accent/80" />
+            </span>
           </div>
-        );
-      })}
+
+          {/* Period column (desktop) */}
+          <div className="hidden pt-6 text-right md:block">
+            <p className="font-mono text-[11px] leading-relaxed tracking-wider text-accent">
+              {item.period}
+            </p>
+            {item.categoryLabel && (
+              <p className="mt-1 font-mono text-[10px] tracking-widest text-ink-faint">
+                {item.categoryLabel}
+              </p>
+            )}
+          </div>
+
+          <div className="min-w-0 md:pl-8">
+            <TimelineCard item={item} />
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
@@ -223,7 +246,7 @@ export default function JourneyLogSection({
         <div className="relative">
           {/* Timeline spine */}
           <div
-            className="absolute left-[7px] top-2 bottom-8 w-px bg-fill/[0.1] md:left-1/2 md:-translate-x-1/2"
+            className="absolute left-[7px] top-7 bottom-28 w-px bg-fill/[0.1] md:left-[13.5rem] md:-translate-x-1/2"
             aria-hidden="true"
           >
             <div
